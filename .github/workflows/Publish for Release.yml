@@ -1,58 +1,46 @@
-name: Publish for Release
+name: Generate and Publish Manifest
 
 on:
-  release:
-    types: [published]
+  push:
+    tags: [ 'v*' ]
+  pull_request:
+    types: [closed]
+    branches: [main, master]
+
+permissions:
+  contents: write
 
 jobs:
-  Publish:
-    name: Publish for Release
-    if: github.event_name == 'release'
+  publish:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' || (github.event.pull_request.merged == true && startsWith(github.event.pull_request.title, 'Release v'))
     steps:
-      - name: Download source
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Generate file name
-        id: get_name
+      - name: Extract version from tag
+        if: github.event_name == 'push'
         run: |
-          TAG_NAME=${{ github.event.release.tag_name }}
-          VERSION=${TAG_NAME#v}
-          FILE_NAME="${GITHUB_REPOSITORY##*/}_$VERSION.zip"
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-          echo "FILE_NAME=$FILE_NAME" >> $GITHUB_OUTPUT
-          echo "PLUGIN=${GITHUB_REPOSITORY##*/}" >> $GITHUB_OUTPUT
+          VERSION=$(echo ${{ github.ref }} | cut -d'/' -f3 | cut -c2-)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - uses: edgarrc/action-7z@v1
-        with:
-          args: 7z a -tzip -mx=9 -xr!*.git* -xr!.* ${{ steps.get_name.outputs.FILE_NAME }}
-
-      - name: Publish to Releases
-        uses: ncipollo/release-action@v1
-        with:
-          name: "${{ steps.get_name.outputs.PLUGIN }} ${{ github.event.release.tag_name }}"
-          allowUpdates: true
-          artifacts: ${{ steps.get_name.outputs.FILE_NAME }}
-          artifactErrorsFailBuild: false
-          omitNameDuringUpdate: true
-          omitBodyDuringUpdate: true
-          omitPrereleaseDuringUpdate: true
-
-      - name: Update manifest
+      - name: Extract version from PR title
+        if: github.event_name == 'pull_request'
         run: |
-          curl -L -o manifest.json https://github.com/$GITHUB_REPOSITORY/releases/download/manifest/manifest.json
-          echo "$(jq --arg target "https://github.com/$GITHUB_REPOSITORY/releases/download/${{ github.event.release.tag_name }}/${{ steps.get_name.outputs.FILE_NAME }}" \
-            --arg version "${{ steps.get_name.outputs.VERSION }}" \
-            '.downloadUrl = $target | .version = $version' manifest.json)" > manifest.json
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          VERSION=$(echo "$PR_TITLE" | grep -oP 'Release v\K[0-9]+\.[0-9]+\.[0-9]+')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Publish manifest
-        uses: ncipollo/release-action@v1
+      - name: Validate version
+        run: |
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version format: $VERSION"
+            exit 1
+          fi
+          echo "Publishing version: $VERSION"
+
+      - name: Publish manifest and release
+        uses: version-fox/plugin-manifest-action@main
         with:
-          name: "manifest"
-          tag: "manifest"
-          allowUpdates: true
-          artifacts: "manifest.json"
-          artifactErrorsFailBuild: false
-          omitNameDuringUpdate: true
-          omitBodyDuringUpdate: true
-          omitPrereleaseDuringUpdate: true
+          version: ${{ env.VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
