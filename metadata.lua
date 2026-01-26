@@ -5,7 +5,7 @@ PLUGIN = {}
 --- Plugin name
 PLUGIN.name = "clang"
 --- Plugin version
-PLUGIN.version = "0.1.3"
+PLUGIN.version = "0.5.2"
 --- Plugin homepage
 PLUGIN.homepage = "https://github.com/version-fox/vfox-clang"
 --- Plugin license, please choose a correct license according to your needs.
