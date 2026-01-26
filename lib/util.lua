@@ -20,12 +20,12 @@ function fetchVersions()
     return versionList
 end
 
-local ClangVersions = fetchVersions()
+
 
 -- available.lua
 function fetchAvailable()
     local result = {}
-
+    local ClangVersions = fetchVersions()
     for i, v in ipairs(ClangVersions) do
         if i == 1 then
             table.insert(result, {
@@ -50,6 +50,7 @@ end
 -- pre_install.lua
 function getDownloadInfo(version)
     local file
+    local ClangVersions = fetchVersions()
 
     if version == "latest" then
         version = ClangVersions[1]
