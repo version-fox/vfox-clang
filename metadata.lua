@@ -20,7 +20,7 @@ NOTE:
     If the plugin is not compatible with the current vfox version,
     vfox will not load the plugin and prompt the user to upgrade vfox.
     --]]
-PLUGIN.minRuntimeVersion = "0.5.0"
+PLUGIN.minRuntimeVersion = "0.5.1"
 -- Some things that need user to be attention!
 PLUGIN.notes = {
     "",
