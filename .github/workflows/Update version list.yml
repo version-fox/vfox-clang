@@ -3,6 +3,7 @@ name: Check Updates Periodically
 on:
   schedule:
     - cron: "0 16 * * 1,4"
+  workflow_dispatch: 
   push:
     branches: ["main"]
 
