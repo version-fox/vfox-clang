@@ -8,6 +8,24 @@ def fetchVersionList
   versionList = Hash(String, Array(String)).from_json versionJson
 end
 
+def queryLatestClangVersion
+  query = "query packageVersions($name: String!, $channelName: String!) {\n  package(name: $name, channelName: $channelName) {\n    versions(limit: 500) {\n      page {\n        version\n      }\n    }\n  }\n}"
+  payload = {
+    "query" => query,
+    "variables" => {
+      "channelName" => "conda-forge",
+      "name" => "clang",
+    },
+    "operationName" => "packageVersions",
+  }.to_json
+  headers = HTTP::Headers{
+    "Content-Type" => "application/json",
+  }
+  response = HTTP::Client.post("https://prefix.dev/api/graphql", headers: headers, body: payload)
+  data = JSON.parse(response.body)
+  data["data"]["package"]["versions"]["page"].as_a.first["version"].as_s
+end
+
 output = "manifest.md"
 
 OptionParser.parse do |parser|
@@ -25,8 +43,7 @@ OptionParser.parse do |parser|
 end
 
 vlist = fetchVersionList
-resp = HTTP::Client.get "https://anaconda.org/conda-forge/clang/labels"
-latestClangVersion = resp.body.match!(/\d\d\.\d\.\d/)[0]
+latestClangVersion = queryLatestClangVersion
 
 if vlist["conda-forge"][0] != latestClangVersion
   vlist["conda-forge"].unshift(latestClangVersion)
