@@ -1,0 +1,27 @@
+name: Plugin
+
+on:
+  pull_request:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Plugin version, for example 0.5.5 (without v)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    if: github.event_name == 'pull_request'
+    uses: version-fox/plugin-manifest-action/.github/workflows/check-plugin.yml@v1
+  release:
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: write
+    uses: version-fox/plugin-manifest-action/.github/workflows/release-plugin.yml@v1
+    with:
+      version: ${{ inputs.version || '' }}
