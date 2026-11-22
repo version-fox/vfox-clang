@@ -32,6 +32,10 @@ vfox config cache.availableHookDuration 0
 
 `<code>` 块存在，但其中的内容不是合法的 JSON，多半同样是中间的代理或页面在作怪。处理方法相同。
 
+## Failed to get versions: the version list has no conda-forge entry
+
+列表是合法的 JSON，但其中没有 `conda-forge` 条目。插件读取的 manifest 总有这一条，因此该地址提供的是别的内容。请检查 `GITHUB_URL`，然后重新搜索。
+
 ## Failed to request the version list
 
 请求根本没有到达服务器：没有网络、DNS 错误、连接被拒绝，或代理丢弃了请求。请检查网络连接和 `GITHUB_URL` 的值。
@@ -51,10 +55,6 @@ pixi 无法从 conda 频道安装 clang。错误信息中会显示失败的命�
 ## unexpected EOF while downloading
 
 下载过程中连接被切断，多见于网络不稳定或镜像。请重新运行同一条命令。
-
-## 安装路径包含空格
-
-主目录或安装路径中含有空格时（例如 `C:\Users\John Doe` 或 `/home/John Doe`）可以正常安装。早期版本在这种路径下会失败（[#5](https://github.com/version-fox/vfox-clang/issues/5)）。
 
 ## `vfox link --detect clang` 没有找到任何安装
 

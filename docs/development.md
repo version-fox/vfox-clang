@@ -17,6 +17,8 @@ checks that CI runs and how to run each one, and the rules the tests depend on.
 | `tests/shell_quoting.lua` | Runs `pixi.install` through the real `/bin/sh`, under glua.             |
 | `tests/e2e/`           | The end-to-end suites in Go (see [e2e.md](e2e.md)).                         |
 | `.github/`             | Workflows, the version list tool (`UpdateVersionList.cr`), Dependabot.     |
+| `.devcontainer/`       | The development container, see [its section](#development-container).       |
+| `.licenserc.yaml`      | Settings of the license header check.                                      |
 | `docs/`                | This documentation, in English and in `docs/zh-CN/`.                       |
 
 ## The checks

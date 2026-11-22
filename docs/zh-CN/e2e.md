@@ -2,7 +2,7 @@
 
 [中文](e2e.md) | [English](../e2e.md)
 
-端到端测试套件使用真实的 vfox 1.1.0 运行插件，方式与用户完全一致：`vfox add`、`vfox search`、`vfox install`、`vfox link --detect`。套件位于 `tests/e2e`，是一个只使用标准库的 Go 模块。不需要 vfox、不需要网络、不启动进程的离线 Lua 测试，见 [development.md](development.md)。
+端到端测试套件使用真实的 vfox 1.1.0 运行插件，方式与用户完全一致：`vfox add`、`vfox search`、`vfox install`、`vfox link --detect`。套件位于 `tests/e2e`，是一个只使用标准库的 Go 模块。离线的 Lua 测试由 `vfox plugin test` 运行，不使用网络，也不启动进程，见 [development.md](development.md)。
 
 ## 套件检查什么
 

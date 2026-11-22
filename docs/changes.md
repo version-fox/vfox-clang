@@ -4,7 +4,7 @@
 
 What changed in each release, as a user notices it. GitHub's release pages list the pull requests.
 
-## Unreleased
+## 0.5.3
 
 ### Added
 
@@ -17,8 +17,9 @@ What changed in each release, as a user notices it. GitHub's release pages list 
   license headers. Dependabot keeps the actions, the Go module and the Docker image up to date.
 - A development container in `.devcontainer/`, with the tools the checks use at the versions CI pins and
   the Docker CLI, so the end-to-end suite can run from inside it. See [development.md](development.md#development-container).
-- Documentation in English and Chinese: the README, [troubleshooting](troubleshooting.md), and
-  this changelog.
+- Documentation in English and Chinese: the README, [using a system clang](link.md),
+  [troubleshooting](troubleshooting.md), [development](development.md), [end-to-end tests](e2e.md),
+  and this changelog.
 
 ### Fixed
 
