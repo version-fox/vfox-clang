@@ -15,7 +15,6 @@
 package common
 
 import (
-	"runtime"
 	"strconv"
 	"strings"
 	"testing"
@@ -176,23 +175,19 @@ func scenarioInstall(t *testing.T, s *Sandbox) {
 	requireOutput(t, version, clang+" --version", "clang version "+latest)
 }
 
-// scenarioDetect puts a clang where LLVM installs live, then links it with
-// `vfox link --detect clang`, as a user with a system LLVM would. Linux looks in
-// CONDA_PREFIX, Windows in ProgramFiles, and both are set to a folder of the
-// sandbox so the runner's own installs stay out of it.
+// scenarioDetect puts a clang in a folder that CONDA_PREFIX names, then links it
+// with `vfox link --detect clang`, as a user with a system LLVM would. The folder
+// is inside the sandbox, so the runner's own installs stay out of the result.
+//
+// The Windows suite does not use ProgramFiles for this. On windows-latest the
+// variable did not reach the plugin, although the other variables of the sandbox
+// did, and the search found the runner's Visual Studio and LLVM instead. The
+// ProgramFiles folders are covered by the offline tests of the plugin instead.
 func scenarioDetect(t *testing.T, s *Sandbox) {
 	s.AddPlugin(t)
 
-	var env map[string]string
-	var root string
-	if runtime.GOOS == "windows" {
-		programFiles := s.T.Join(s.Home, "Program Files")
-		env = map[string]string{"ProgramFiles": programFiles}
-		root = s.T.Join(programFiles, "LLVM")
-	} else {
-		root = s.T.Join(s.Home, "conda env")
-		env = map[string]string{"CONDA_PREFIX": root}
-	}
+	root := s.T.Join(s.Home, "conda env")
+	env := map[string]string{"CONDA_PREFIX": root}
 	s.T.Put(t, s.Artifact.Clang, s.T.Join(root, "bin", s.T.Exe("clang")))
 
 	linked := s.Vfox(t, env, "link", "--detect", "clang", "--yes")

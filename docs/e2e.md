@@ -22,10 +22,12 @@ Both platforms run the same five scenarios, from `tests/e2e/common/scenarios.go`
 4. **Install with a space in HOME**: the real clang is installed from conda-forge into a home
    directory that contains a space, and the installed `clang --version` must name the version
    (issue #5).
-5. **A system clang is detected and linked**: a fake `clang` in the place each platform's
-   detection looks, `vfox link --detect clang --yes` links it, `vfox list clang` shows it, and
-   a second run finds nothing new. Linux uses `CONDA_PREFIX`, Windows `ProgramFiles`, so the
-   runner's own installations stay out of the way.
+5. **A system clang is detected and linked**: a fake `clang` in a folder that `CONDA_PREFIX`
+   names, `vfox link --detect clang --yes` links it, `vfox list clang` shows it, and a second run
+   finds nothing new. Both suites use `CONDA_PREFIX`, so the runner's own LLVM installs stay out of
+   the way. On `windows-latest`, `ProgramFiles` did not reach the plugin when the suite set it, and
+   the search found the runner's Visual Studio and LLVM instead; the Windows folders of the plugin
+   are checked by its offline tests.
 
 The fake GitHub runs on the host and listens on `127.0.0.1`. The plugin reaches it through
 `GITHUB_URL`.

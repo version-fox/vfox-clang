@@ -38,6 +38,10 @@ import (
 // tests and the Lua hooks are checked with (see docs/e2e.md).
 const VfoxVersion = "1.1.0"
 
+// downloadAttempts bounds how often the pinned vfox archive is downloaded when
+// the download is cut short or its digest does not match.
+const downloadAttempts = 5
+
 // vfoxRelease is one archive of the pinned vfox release, with its SHA-256 as
 // published in the release's checksums.txt.
 type vfoxRelease struct {
@@ -242,11 +246,23 @@ func DownloadVfox(t *testing.T, key string) string {
 	}
 
 	url := fmt.Sprintf("https://github.com/version-fox/vfox/releases/download/v%s/%s", VfoxVersion, release.asset)
-	if err := download(url, archive); err != nil {
-		t.Fatalf("download vfox: %v", err)
+	// A download from GitHub can be cut short, and then the checksum does not
+	// match: that download is tried again, up to downloadAttempts times.
+	var lastErr error
+	for attempt := 1; attempt <= downloadAttempts; attempt++ {
+		lastErr = download(url, archive)
+		if lastErr == nil && !archiveMatches(archive, release.sha256) {
+			lastErr = fmt.Errorf("checksum of %s does not match the pinned digest", release.asset)
+		}
+		if lastErr == nil {
+			break
+		}
+		t.Logf("download of vfox %s, attempt %d of %d: %v", release.asset, attempt, downloadAttempts, lastErr)
+		_ = os.Remove(archive)
+		time.Sleep(time.Duration(attempt*5) * time.Second)
 	}
-	if got := fileSHA256(t, archive); got != release.sha256 {
-		t.Fatalf("vfox archive checksum is %s, want %s", got, release.sha256)
+	if lastErr != nil {
+		t.Fatalf("download vfox: %v", lastErr)
 	}
 	data, err := extractBinary(archive, release.binary)
 	if err != nil {

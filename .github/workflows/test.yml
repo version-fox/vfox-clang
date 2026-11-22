@@ -42,7 +42,7 @@ jobs:
           VFOX_SHA256: 3b33c3c468b27bc17aecf0d6d3af24fe49fe204972984904a136a47b402a0ee4
         run: |
           archive="$RUNNER_TEMP/vfox.tar.gz"
-          curl --fail --silent --show-error --location --output "$archive" \
+          curl --fail --silent --show-error --location --retry 5 --retry-all-errors --retry-delay 5 --output "$archive" \
             "https://github.com/version-fox/vfox/releases/download/v${VFOX_VERSION}/vfox_${VFOX_VERSION}_linux_x86_64.tar.gz"
           echo "$VFOX_SHA256  $archive" | sha256sum --check
           mkdir "$RUNNER_TEMP/vfox"
