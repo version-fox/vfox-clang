@@ -17,7 +17,9 @@
 # the offline tests run with. The end-to-end suite starts its containers on the
 # host's Docker daemon through the socket that devcontainer.json mounts.
 
-FROM golang:1.27.1
+# Keep this Go version in step with go-version in .github/workflows (lint.yml,
+# e2e.yml, test.yml) and with the Go versions named in docs/. Change them together.
+FROM golang:1.27.4
 
 # The Docker CLI only: it drives the host's daemon.
 COPY --from=docker:29-cli /usr/local/bin/docker /usr/local/bin/docker

@@ -27,7 +27,7 @@ CI runs these checks on every pull request. Each one can be run locally.
 | :----------------------- | :----------------------------------------------------------------------------------- | :------------------------------------ |
 | Lua format               | `stylua --check .`                                                                   | stylua 2.5.2                          |
 | Lua types                | `lua-language-server --check . --checklevel=Warning`                                 | lua-language-server 3.19.1            |
-| Go format                | `gofmt -l .` in `tests/e2e` must print nothing                                       | gofmt, Go 1.27.1                      |
+| Go format                | `gofmt -l .` in `tests/e2e` must print nothing                                       | gofmt, Go 1.27.4                      |
 | Go vet                   | `go vet ./...` and `GOOS=windows go vet ./...` in `tests/e2e`                        | Go                                    |
 | Go unit tests            | `go test -short ./...` in `tests/e2e`                                                | Go                                    |
 | Workflows                | `actionlint`                                                                         | actionlint 1.7.12                     |
