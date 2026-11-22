@@ -20,7 +20,7 @@
 
 `tests/e2e/linux` 用其中的 `Dockerfile` 构建镜像（Ubuntu 26.04，只装了 CA 证书），然后为每个场景启动一个容器，场景结束时删除。vfox、插件 zip 和假程序通过 `docker cp` 放入容器，所有命令通过 `docker exec` 执行。容器与宿主机共享网络，因此能访问宿主机上的假 GitHub。容器内的 HOME 是 `/root/home with space`，`PIXI_CACHE_DIR` 也指向其中。
 
-需要 Docker 与 Go 1.27.1。在仓库根目录执行：
+需要 Docker 与 Go 1.27.4。在仓库根目录执行：
 
 ``` shell
 cd tests/e2e

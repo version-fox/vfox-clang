@@ -40,7 +40,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
         with:
-          go-version: '1.27.1'
+          go-version: '1.27.4'
           cache: false
       - name: Run the suite in Ubuntu 26.04 containers
         run: go test -v -timeout 55m -run TestE2E ./linux
@@ -56,7 +56,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7
         with:
-          go-version: '1.27.1'
+          go-version: '1.27.4'
           cache: false
       - name: Run the suite on the Windows runner
         run: go test -v -timeout 55m -run TestE2E ./windows

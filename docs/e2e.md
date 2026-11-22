@@ -40,7 +40,7 @@ vfox, the plugin zip and the fake programs go into the container with `docker cp
 command runs with `docker exec`. The container shares the host's network, so it reaches the fake
 GitHub on the host. Its HOME is `/root/home with space`, and `PIXI_CACHE_DIR` points into it.
 
-You need Docker and Go 1.27.1. From the repository root:
+You need Docker and Go 1.27.4. From the repository root:
 
 ``` shell
 cd tests/e2e

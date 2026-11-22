@@ -26,7 +26,7 @@ CI 在每个 Pull Request 上运行以下检查，每一项都可以在本地运
 | :------------- | :----------------------------------------------------------------------------------------- | :---------------------------- |
 | Lua 格式       | `stylua --check .`                                                                         | stylua 2.5.2                  |
 | Lua 类型       | `lua-language-server --check . --checklevel=Warning`                                       | lua-language-server 3.19.1    |
-| Go 格式        | 在 `tests/e2e` 中执行 `gofmt -l .`，输出必须为空                                           | gofmt，Go 1.27.1              |
+| Go 格式        | 在 `tests/e2e` 中执行 `gofmt -l .`，输出必须为空                                           | gofmt，Go 1.27.4              |
 | Go vet         | 在 `tests/e2e` 中执行 `go vet ./...` 与 `GOOS=windows go vet ./...`                        | Go                            |
 | Go 单元测试    | 在 `tests/e2e` 中执行 `go test -short ./...`                                               | Go                            |
 | 工作流检查     | `actionlint`                                                                               | actionlint 1.7.12             |
