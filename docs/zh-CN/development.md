@@ -77,6 +77,19 @@ crystal build --release --no-debug .github/UpdateVersionList.cr -o /tmp/UpdateVe
 
 只有当 conda-forge 上的 clang 比列表中的新时，工具才会写出 `manifest.md`。它的输出就是 `manifest` 发布页的正文，插件从那里读取版本列表。
 
+## 开发容器
+
+`.devcontainer/` 提供一个 Linux 开发环境，其中的检查工具版本与上文一致，并装有离线测试所用的 vfox 版本以及 Docker 命令行。它挂载了宿主机的 Docker 套接字，因此端到端套件会在宿主机的守护进程上启动容器，与你工作的容器并列。容器与宿主机共享网络，因为套件需要通过 `127.0.0.1` 访问宿主机上的假 GitHub。
+
+可以用任何支持 Dev Containers 规范的工具打开，例如 VS Code 的 **Dev Containers: Reopen in Container**，或命令行：
+
+``` shell
+devcontainer up --workspace-folder .
+devcontainer exec --workspace-folder . bash
+```
+
+在 rootless 的 Docker 主机上，先把挂载指向它的套接字：`export DOCKER_SOCK="$XDG_RUNTIME_DIR/docker.sock"`。Windows 套件不在容器中运行，它需要 Windows 主机（见 [e2e.md](e2e.md)）。
+
 ## 发布
 
 参见 [README](../../README_CN.md#发布插件) 中的“发布插件”一节。

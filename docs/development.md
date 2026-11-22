@@ -95,6 +95,25 @@ crystal build --release --no-debug .github/UpdateVersionList.cr -o /tmp/UpdateVe
 The tool writes `manifest.md` only when conda-forge has a newer clang than the list. Its output is
 the body of the `manifest` release, which the plugin reads.
 
+## Development container
+
+`.devcontainer/` opens a Linux environment with the versions of the checks above, the vfox release
+the offline tests run with, and the Docker CLI. It mounts the host's Docker socket, so the end-to-end
+suite starts its containers on the host's daemon, next to the container you work in. The container
+shares the host's network, as the suite needs it to reach the fake GitHub on `127.0.0.1`.
+
+Open it with any Dev Containers tool, such as **Dev Containers: Reopen in Container** in VS Code, or
+the CLI:
+
+``` shell
+devcontainer up --workspace-folder .
+devcontainer exec --workspace-folder . bash
+```
+
+On a rootless Docker host, point the mount at its socket first:
+`export DOCKER_SOCK="$XDG_RUNTIME_DIR/docker.sock"`. The Windows suite is not run in the container;
+it needs a Windows host (see [e2e.md](e2e.md)).
+
 ## Releasing
 
 See the Releasing section of the [README](../README.md#releasing-this-plugin).
