@@ -18,7 +18,7 @@
 
 ## Linux：Ubuntu 26.04 容器
 
-`tests/e2e/linux` 用其中的 `Dockerfile` 构建镜像（Ubuntu 26.04，只装了 CA 证书），然后为每个场景启动一个容器，场景结束时删除。vfox、插件 zip 和假程序通过 `docker cp` 放入容器，所有命令通过 `docker exec` 执行。容器与宿主机共享网络，因此能访问宿主机上的假 GitHub。容器内的 HOME 是 `/root/home with space`。
+`tests/e2e/linux` 用其中的 `Dockerfile` 构建镜像（Ubuntu 26.04，只装了 CA 证书），然后为每个场景启动一个容器，场景结束时删除。vfox、插件 zip 和假程序通过 `docker cp` 放入容器，所有命令通过 `docker exec` 执行。容器与宿主机共享网络，因此能访问宿主机上的假 GitHub。容器内的 HOME 是 `/root/home with space`，`PIXI_CACHE_DIR` 也指向其中。
 
 需要 Docker 与 Go 1.27.1。在仓库根目录执行：
 
@@ -37,7 +37,7 @@ rootless Docker 同样可用：套件不依赖容器内对绑定挂载目录的�
 
 ## Windows：runner 本机
 
-`tests/e2e/windows` 直接在 Windows 主机上运行，不使用容器。Windows 容器需要 Windows 版的 Docker 引擎和大得多的镜像，而这里的检查并不需要它。每个场景在自己的临时目录中运行，其中的 HOME 名为 `home with space`。套件会移除可能改变 vfox 行为的宿主机变量（`GITHUB_URL`、`Conda_Forge`、`CONDA_PREFIX`、`VFOX_HOME`、`HOME`、`USERPROFILE`、`CI`），只设置场景需要的变量。
+`tests/e2e/windows` 直接在 Windows 主机上运行，不使用容器。Windows 容器需要 Windows 版的 Docker 引擎和大得多的镜像，而这里的检查并不需要它。每个场景在自己的临时目录中运行，其中的 HOME 名为 `home with space`。套件会移除可能改变 vfox 行为的宿主机变量（`GITHUB_URL`、`Conda_Forge`、`CONDA_PREFIX`、`VFOX_HOME`、`HOME`、`USERPROFILE`、`CI`），只设置场景需要的变量。每个沙箱还会把 `PIXI_CACHE_DIR` 指向其内部的目录，在 Windows 上把 `LOCALAPPDATA` 与 `APPDATA` 指向其 HOME 内的目录。pixi 会先读取 `PIXI_CACHE_DIR`，然后才向 Windows 询问缓存目录。`windows-latest` runner 上这一询问失败，报错为 `could not determine default cache directory`，因此沙箱不依赖它的答复。
 
 在仓库根目录的 PowerShell 中执行：
 

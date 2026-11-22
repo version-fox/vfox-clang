@@ -46,6 +46,7 @@ Go 相关命令在 `tests/e2e` 中执行，其余命令在仓库根目录执行�
 - 模块返回一个表，钩子调用这些模块。共用的辅助函数放在 `lib/util.lua`。
 - 不要调用 `os.exit`。退出进程会跳过 vfox 的清理，于是失败的安装会留下标记和不完整的目录（issue #4）。应当抛出错误，并写明出了什么问题。
 - 传给 shell 的每个路径和参数都要用 `util.quote` 加引号：Unix 上是单引号，Windows 上是 cmd.exe 所需的双引号。Windows 命令行请用 `pixi.silenced` 构造，它会按 cmd.exe 的要求把整行包上引号。
+- 读取命令输出时用 `read("*a")` 整体读取，再自行切分行。Windows 上 vfox 的 `io.popen` 句柄只有 `read` 和 `close`，`lines` 只存在于 Unix。在 Linux 上调用 `lines` 的测试会通过，同样的代码却会在 Windows runner 上失败。
 
 ## 编写离线测试
 

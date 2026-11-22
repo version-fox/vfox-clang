@@ -68,6 +68,11 @@ func (c *container) Exe(name string) string {
 	return name
 }
 
+// Profile is empty: on Linux the HOME of the sandbox is the whole profile.
+func (c *container) Profile() map[string]string {
+	return map[string]string{}
+}
+
 // Mkdir creates a directory and its parents in the container.
 func (c *container) Mkdir(t *testing.T, dir string) {
 	t.Helper()

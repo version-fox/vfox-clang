@@ -73,6 +73,15 @@ func (n *native) Exe(name string) string {
 	return name + ".exe"
 }
 
+// Profile places the local and roaming application data of the sandbox user
+// inside its HOME, so no lookup reaches the runner's own profile.
+func (n *native) Profile() map[string]string {
+	return map[string]string{
+		"LOCALAPPDATA": filepath.Join(n.Home(), "AppData", "Local"),
+		"APPDATA":      filepath.Join(n.Home(), "AppData", "Roaming"),
+	}
+}
+
 // Mkdir creates a directory and its parents.
 func (n *native) Mkdir(t *testing.T, dir string) {
 	t.Helper()

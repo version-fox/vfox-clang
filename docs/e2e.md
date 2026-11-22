@@ -36,7 +36,7 @@ The fake GitHub runs on the host and listens on `127.0.0.1`. The plugin reaches 
 else), then starts one container per scenario and removes it at the end of the scenario.
 vfox, the plugin zip and the fake programs go into the container with `docker cp`, and every
 command runs with `docker exec`. The container shares the host's network, so it reaches the fake
-GitHub on the host. Its HOME is `/root/home with space`.
+GitHub on the host. Its HOME is `/root/home with space`, and `PIXI_CACHE_DIR` points into it.
 
 You need Docker and Go 1.27.1. From the repository root:
 
@@ -59,7 +59,7 @@ Rootless Docker works: the suite uses no bind mounts that the container has to w
 Windows Docker engine and a much larger image for the same check. Each scenario gets a temporary
 directory of its own, with a HOME named `home with space` inside it. The suite removes host
 variables that would change vfox's behavior (`GITHUB_URL`, `Conda_Forge`, `CONDA_PREFIX`,
-`VFOX_HOME`, `HOME`, `USERPROFILE`, `CI`) and sets only the ones a scenario needs.
+`VFOX_HOME`, `HOME`, `USERPROFILE`, `CI`) and sets only the ones a scenario needs. Every sandbox also sets `PIXI_CACHE_DIR` to a folder inside it, and on Windows `LOCALAPPDATA` and `APPDATA` to folders inside its HOME. pixi reads `PIXI_CACHE_DIR` before it asks Windows for the cache folder. On the `windows-latest` runner that question failed with `could not determine default cache directory`, so the sandbox does not depend on the answer.
 
 From the repository root, in PowerShell:
 

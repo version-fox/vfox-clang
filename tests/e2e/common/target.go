@@ -47,6 +47,9 @@ type Target interface {
 	Join(elem ...string) string
 	// Exe adds the executable suffix of the target's platform to a program name.
 	Exe(name string) string
+	// Profile returns the variables that place the user's data folders inside
+	// Home, so the sandbox has a profile of its own, as a real user does.
+	Profile() map[string]string
 	// Mkdir creates a directory and its parents inside the target.
 	Mkdir(t *testing.T, path string)
 	// Put copies a file from the host to targetPath inside the target, creating
@@ -76,6 +79,10 @@ func NewSandbox(t *testing.T, target Target, a *Artifacts) *Sandbox {
 	t.Helper()
 	home := target.Home()
 	target.Mkdir(t, home)
+	for _, dir := range target.Profile() {
+		target.Mkdir(t, dir)
+	}
+	target.Mkdir(t, target.Join(home, ".cache", "pixi"))
 	target.Put(t, a.Vfox, target.Vfox())
 	return &Sandbox{
 		T:        target,
@@ -96,14 +103,23 @@ func (s *Sandbox) InstallDir() string {
 	return s.T.Join(s.VfoxHome, "cache", "clang")
 }
 
-// Env is the environment vfox runs with: HOME, VFOX_HOME and CI, which keeps
-// vfox from drawing progress bars. extra is added on top.
+// Env is the environment vfox runs with: the sandbox's profile, HOME, VFOX_HOME
+// and CI, which keeps vfox from drawing progress bars. extra is added on top.
+//
+// PIXI_CACHE_DIR names pixi's cache inside the sandbox. pixi reads it before it
+// asks the operating system where the user's cache folder is. On the Windows
+// runner that question failed ("could not determine default cache directory"),
+// so the sandbox does not depend on the answer.
 func (s *Sandbox) Env(extra map[string]string) map[string]string {
 	env := map[string]string{
-		"HOME":        s.Home,
-		"USERPROFILE": s.Home,
-		"VFOX_HOME":   s.VfoxHome,
-		"CI":          "1",
+		"HOME":           s.Home,
+		"USERPROFILE":    s.Home,
+		"VFOX_HOME":      s.VfoxHome,
+		"PIXI_CACHE_DIR": s.T.Join(s.Home, ".cache", "pixi"),
+		"CI":             "1",
+	}
+	for key, value := range s.T.Profile() {
+		env[key] = value
 	}
 	for key, value := range extra {
 		env[key] = value

@@ -53,6 +53,9 @@ differently from the release the plugin is checked with.
 - Quote every path and argument that goes to the shell with `util.quote`, which is single quotes on
   Unix and double quotes for cmd.exe on Windows. Build Windows command lines with
   `pixi.silenced`, which wraps the whole line as cmd.exe requires.
+- Read a command's output with `read("*a")` and split it into lines yourself. On Windows the handle
+  that `io.popen` returns has only `read` and `close`; `lines` exists on Unix alone. A test on Linux
+  that calls `lines` passes, and the same code fails on the Windows runner.
 
 ## Writing offline tests
 
