@@ -17,7 +17,7 @@
 # the offline tests run with. The end-to-end suite starts its containers on the
 # host's Docker daemon through the socket that devcontainer.json mounts.
 
-FROM golang:1.27.1
+FROM golang:1.27.4
 
 # The Docker CLI only: it drives the host's daemon.
 COPY --from=docker:29-cli /usr/local/bin/docker /usr/local/bin/docker
