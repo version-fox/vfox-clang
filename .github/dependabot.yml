@@ -26,3 +26,7 @@ updates:
     directory: /tests/e2e/linux
     schedule:
       interval: weekly
+  - package-ecosystem: docker
+    directory: /.devcontainer
+    schedule:
+      interval: weekly
