@@ -76,7 +76,7 @@ The suite is skipped on any other host.
 
 | Setting   | Meaning                                                                                                             |
 | :-------- | :------------------------------------------------------------------------------------------------------------------ |
-| `VFOX_BIN` | A vfox binary to use instead of downloading the pinned release (vfox 1.1.0, checked against its SHA-256).          |
+| `VFOX_BIN` | A vfox binary to use instead of downloading the pinned release (the pinned version is 1.1.0; a downloaded archive is checked against its SHA-256, this binary is not).          |
 | `TMPDIR`   | Where `t.TempDir()` puts the scenarios' files. Set it to a disk with room for a clang install.                      |
 | `-short`   | `go test -short ./...` skips both suites and runs the unit tests of the helpers.                                    |
 

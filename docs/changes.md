@@ -15,6 +15,8 @@ What changed in each release, as a user notices it. GitHub's release pages list 
   the Windows runner. See [development.md](development.md) and [e2e.md](e2e.md).
 - Checks in CI: Lua formatting and types, Go formatting, vet and unit tests, workflow lint, and
   license headers. Dependabot keeps the actions, the Go module and the Docker image up to date.
+- A development container in `.devcontainer/`, with the tools the checks use at the versions CI pins and
+  the Docker CLI, so the end-to-end suite can run from inside it. See [development.md](development.md#development-container).
 - Documentation in English and Chinese: the README, [troubleshooting](troubleshooting.md), and
   this changelog.
 
