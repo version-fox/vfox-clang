@@ -4,7 +4,7 @@
 
 What changed in each release, as a user notices it. GitHub's release pages list the pull requests.
 
-## 0.5.3
+## 0.5.3 (2026-11-22)
 
 ### Added
 
