@@ -57,22 +57,11 @@ io.popen = function(command, mode)
     else
         output = table.concat(state.children[target] or {}, "\n")
     end
-    local lines = {}
-    for line in (output .. "\n"):gmatch("([^\n]*)\n") do
-        if line ~= "" then
-            table.insert(lines, line)
-        end
-    end
+    -- Only read and close, as vfox's io.popen returns them on Windows: a call to
+    -- lines would fail there, so the stub fails here too.
     return {
         read = function()
             return output
-        end,
-        lines = function()
-            local index = 0
-            return function()
-                index = index + 1
-                return lines[index]
-            end
         end,
         close = function()
             return true

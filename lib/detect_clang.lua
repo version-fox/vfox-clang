@@ -33,14 +33,17 @@ function detect.list_children(dir)
     if handle == nil then
         return {}
     end
+    -- vfox's io.popen returns read and close on every platform, but lines only
+    -- on Unix, so the output is read whole and split here.
+    local output = handle:read("*a") or ""
+    handle:close()
     local result = {}
-    for line in handle:lines() do
+    for line in output:gmatch("[^\r\n]+") do
         local name = util.trim(line)
         if name ~= "" and name ~= "." and name ~= ".." then
             table.insert(result, util.join(dir, name))
         end
     end
-    handle:close()
     return result
 end
 
