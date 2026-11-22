@@ -4,7 +4,7 @@
 
 按发布版本列出用户能感受到的变化。GitHub 的 Release 页面列出了对应的 PR。
 
-## 未发布
+## 0.5.3（2026-11-22）
 
 ### 新增
 
@@ -12,7 +12,7 @@
 - 插件的测试：用 `vfox plugin test` 运行的离线 Lua 钩子测试、用真实 `/bin/sh` 执行安装命令的引号测试，以及分别在 Ubuntu 26.04 容器和 Windows runner 上运行的端到端测试。见 [development.md](development.md) 与 [e2e.md](e2e.md)。
 - CI 中的检查：Lua 格式与类型、Go 格式、vet 与单元测试、工作流检查和许可证头。Dependabot 会跟进 Action、Go 模块与 Docker 镜像的更新。
 - `.devcontainer/` 提供开发容器，内含 CI 所固定版本的检查工具与 Docker 命令行，端到端套件可以在其中运行。见 [development.md](development.md#开发容器)。
-- 中英文文档：README、[故障排查](troubleshooting.md) 与本变更记录。
+- 中英文文档：README、[使用系统 clang](link.md)、[故障排查](troubleshooting.md)、[开发](development.md)、[端到端测试](e2e.md) 与本变更记录。
 
 ### 修复
 

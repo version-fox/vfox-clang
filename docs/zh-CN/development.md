@@ -16,6 +16,8 @@
 | `tests/shell_quoting.lua` | 在 glua 下用真实的 `/bin/sh` 运行 `pixi.install`。                                       |
 | `tests/e2e/`              | Go 编写的端到端套件（见 [e2e.md](e2e.md)）。                                             |
 | `.github/`                | 工作流、版本列表工具（`UpdateVersionList.cr`）、Dependabot 配置。                         |
+| `.devcontainer/`          | 开发容器，见 [开发容器](#开发容器)。                                                     |
+| `.licenserc.yaml`         | 许可证头检查的设置。                                                                     |
 | `docs/`                   | 本文档，英文版在 `docs/` 下，中文版在 `docs/zh-CN/` 下。                                  |
 
 ## 检查项

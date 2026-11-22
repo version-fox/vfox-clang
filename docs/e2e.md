@@ -4,8 +4,8 @@
 
 The end-to-end suites run the plugin with real vfox 1.1.0, in the way a user runs it:
 `vfox add`, `vfox search`, `vfox install`, `vfox link --detect`. They are in `tests/e2e`,
-a Go module that uses only the standard library. The offline Lua tests, which run without
-vfox's network or processes, are described in [development.md](development.md).
+a Go module that uses only the standard library. The offline Lua tests, which `vfox plugin test`
+runs without network access or processes, are described in [development.md](development.md).
 
 ## What the suites check
 

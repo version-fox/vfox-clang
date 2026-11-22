@@ -43,6 +43,11 @@ then search again.
 The `<code>` block is there, but its content is not valid JSON. Usually an intermediary
 answered with another page. Handle it the same way.
 
+## Failed to get versions: the version list has no conda-forge entry
+
+The list is valid JSON, but it has no `conda-forge` entry. The manifest always has one, so the
+address serves something else. Check `GITHUB_URL`, then search again.
+
 ## Failed to request the version list
 
 The request did not reach the server at all: no network, a DNS error, a refused connection,
@@ -69,11 +74,6 @@ x86_64. On other platforms it stops before it downloads anything.
 
 The connection was cut in the middle of a download, most often on an unstable network or a
 mirror. Run the same command again.
-
-## The install path contains a space
-
-A HOME or install path with a space, such as `C:\Users\John Doe` or `/home/John Doe`, works.
-Earlier releases failed there (issue #5).
 
 ## `vfox link --detect clang` finds nothing
 
