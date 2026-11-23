@@ -4,7 +4,7 @@
 
 What changed in each release, as a user notices it. GitHub's release pages list the pull requests.
 
-## Unreleased
+## 0.5.4 (2026-11-23)
 
 ### Fixed
 

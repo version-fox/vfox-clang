@@ -77,11 +77,14 @@ export GITHUB_URL=https://mirror.example.com/https://github.com/
 
 ## Mirrors
 
-`GITHUB_URL` moves both GitHub downloads the plugin makes to a mirror: the version list
-(`<GITHUB_URL>/version-fox/vfox-clang/releases/manifest`) and the pixi archive
-(`<GITHUB_URL>/prefix-dev/pixi/releases/latest/download/…`). `Conda_Forge` is the conda
-channel that pixi installs clang from, and may be a mirror of conda-forge such as
-`https://prefix.dev/conda-forge`. Set them before the command that needs them.
+`GITHUB_URL` moves the GitHub downloads the plugin makes to a mirror: the version list
+(`<GITHUB_URL>/version-fox/vfox-clang/releases/manifest`), and the pixi archive and the
+`.sha256` file that pixi publishes next to it (`<GITHUB_URL>/prefix-dev/pixi/releases/latest/download/…`).
+The plugin checks the archive against that SHA-256. A mirror that answers the `.sha256` address
+with neither the file nor a 404 stops the install; see
+[troubleshooting](docs/troubleshooting.md#failed-to-get-the-sha-256-of-the-archive).
+`Conda_Forge` is the conda channel that pixi installs clang from, and may be a mirror of
+conda-forge such as `https://prefix.dev/conda-forge`. Set them before the command that needs them.
 
 ## Platforms
 
