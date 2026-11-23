@@ -53,6 +53,33 @@ address serves something else. Check `GITHUB_URL`, then search again.
 The request did not reach the server at all: no network, a DNS error, a refused connection,
 or a proxy that drops it. Check the connection and the `GITHUB_URL` value.
 
+## Failed to get the SHA-256 of the archive
+
+Before the install, the plugin reads the SHA-256 that pixi publishes next to the archive, at
+`<GITHUB_URL>/prefix-dev/pixi/releases/latest/download/<archive>.sha256`. A 404 means pixi publishes
+no SHA-256 for the archive: the install goes on, and vfox prints `Checksum is not provided`. Any other
+answer stops the install:
+
+- `status N`, for a status other than 200 or 404: the address does not serve the file. Check
+  `GITHUB_URL` and the mirror, as for the version list.
+- `has no SHA-256 value`: the address answered with a page that is not a SHA-256 file. Usually an
+  intermediary answered. Check the network and the mirror.
+
+## Failed to request the SHA-256 of the archive
+
+The request did not reach the server: no network, a DNS error, a refused connection, or a proxy that
+drops it. Check the connection and the `GITHUB_URL` value, as for the version list.
+
+## The archive does not match its SHA-256
+
+Symptom: the install prints `Verifying checksum <sha256>...`, then `Checksum error, file: <path>`, and
+it stops before the archive is unpacked.
+
+The downloaded archive is not the one whose SHA-256 pixi published. Usually the download was cut short
+or changed on the way, or a mirror holds another file. Run the install again. If pixi published a new
+release while the install ran, the archive and its SHA-256 can come from two releases; the next install
+gets both from the new one.
+
 ## Failed to execute command: ... pixi ... global install
 
 pixi could not install clang from the conda channel. The message shows the command that

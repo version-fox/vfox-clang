@@ -47,6 +47,22 @@ function pixi.downloadURL(osType, archType)
     return util.githubURL() .. "/prefix-dev/pixi/releases/latest/download/" .. pixi.asset(osType, archType)
 end
 
+--- Returns the URL of the .sha256 file that pixi publishes next to the archive at url.
+function pixi.checksumURL(url)
+    return url .. ".sha256"
+end
+
+--- Returns the SHA-256 that a .sha256 file holds, in lowercase, or nil when its first word is not
+--- 64 hexadecimal digits. The file holds the digest, two spaces and the archive name, as sha256sum
+--- writes them. The name is not checked: the file comes from the archive's own address.
+function pixi.parseChecksum(content)
+    local digest = string.match(content, "^%s*(%S+)")
+    if digest == nil or #digest ~= 64 or string.match(digest, "^%x+$") == nil then
+        return nil
+    end
+    return string.lower(digest)
+end
+
 --- Returns the path of the pixi executable that PreInstall unpacked into path.
 function pixi.binary(path)
     if util.isWindows() then

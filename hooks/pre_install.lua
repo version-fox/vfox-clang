@@ -12,11 +12,38 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
+local http = require("http")
 local versions = require("versions")
 local util = require("util")
 local pixi = require("pixi")
 
---- Resolves the requested version against the list and tells vfox where pixi is.
+--- Asks GitHub for the SHA-256 that pixi publishes next to the archive at url. nil means pixi
+--- publishes none (a 404), so vfox skips the check and warns. Any other failure is an error: a
+--- published value is never skipped without a word.
+local function fetchChecksum(url)
+    local checksumURL = pixi.checksumURL(url)
+    local resp, err = http.get({
+        url = checksumURL,
+    })
+    if err ~= nil then
+        error("Failed to request the SHA-256 of the archive: " .. err)
+    end
+    -- http.get returns the response for every HTTP status, so a 404 arrives here with err == nil.
+    if resp.status_code == 404 then
+        return nil
+    end
+    if resp.status_code ~= 200 then
+        error("Failed to get the SHA-256 of the archive: status " .. tostring(resp.status_code))
+    end
+    local sha256 = pixi.parseChecksum(resp.body)
+    if sha256 == nil then
+        error("Failed to get the SHA-256 of the archive: " .. checksumURL .. " has no SHA-256 value")
+    end
+    return sha256
+end
+
+--- Resolves the requested version against the list and tells vfox where pixi is, and the SHA-256
+--- that pixi publishes for the archive, which vfox checks before it unpacks the archive.
 function PLUGIN:PreInstall(ctx)
     local list = versions.fetch()
     local version = ctx.version
@@ -27,8 +54,11 @@ function PLUGIN:PreInstall(ctx)
         error("Unsupported version: " .. tostring(ctx.version) .. ". Run `vfox search clang` to list the versions.")
     end
 
+    local url = pixi.downloadURL(RUNTIME.osType, RUNTIME.archType)
     return {
-        url = pixi.downloadURL(RUNTIME.osType, RUNTIME.archType),
+        url = url,
         version = version,
+        -- nil: vfox prints that no checksum is provided and installs without the check.
+        sha256 = fetchChecksum(url),
     }
 end

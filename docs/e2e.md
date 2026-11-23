@@ -21,7 +21,8 @@ Both platforms run the same five scenarios, from `tests/e2e/common/scenarios.go`
    fake GitHub serves a version whose pixi always fails.
 4. **Install with a space in HOME**: the real clang is installed from conda-forge into a home
    directory that contains a space, and the installed `clang --version` must name the version
-   (issue #5).
+   (issue #5). The pixi archive is checked against the SHA-256 that pixi publishes, so the install
+   prints `Verifying checksum` and no warning about a missing checksum (issue #14).
 5. **A system clang is detected and linked**: a fake `clang` in a folder that `CONDA_PREFIX`
    names, `vfox link --detect clang --yes` links it, `vfox list clang` shows it, and a second run
    finds nothing new. Both suites use `CONDA_PREFIX`, so the runner's own LLVM installs stay out of

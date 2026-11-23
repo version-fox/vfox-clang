@@ -4,6 +4,16 @@
 
 What changed in each release, as a user notices it. GitHub's release pages list the pull requests.
 
+## Unreleased
+
+### Fixed
+
+- pixi's archive is checked against the SHA-256 that pixi publishes next to it, before vfox unpacks it.
+  Before, the install printed `Checksum is not provided` and skipped the check
+  ([#14](https://github.com/version-fox/vfox-clang/issues/14)). A release that publishes no SHA-256 still
+  installs, with that warning. If the SHA-256 cannot be read, the install stops; see
+  [troubleshooting.md](troubleshooting.md#failed-to-get-the-sha-256-of-the-archive).
+
 ## 0.5.3 (2026-11-22)
 
 ### Added
