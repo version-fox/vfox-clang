@@ -4,6 +4,12 @@
 
 按发布版本列出用户能感受到的变化。GitHub 的 Release 页面列出了对应的 PR。
 
+## 未发布
+
+### 修复
+
+- pixi 的安装包在 vfox 解压之前，会与 pixi 在其旁边发布的 SHA-256 核对。此前安装会打印 `Checksum is not provided` 并跳过这项校验（[#14](https://github.com/version-fox/vfox-clang/issues/14)）。没有发布 SHA-256 的版本仍会安装，并打印该警告。如果读不到 SHA-256，安装会以错误停止，见 [故障排查](troubleshooting.md#无法获取安装包的-sha-256)。
+
 ## 0.5.3（2026-11-22）
 
 ### 新增

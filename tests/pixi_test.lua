@@ -88,6 +88,33 @@ expect(
 )
 state.env.GITHUB_URL = nil
 
+-- The .sha256 file that pixi publishes sits next to the archive, and a mirror serves it too.
+expect(
+    pixi.checksumURL(pixi.downloadURL("linux", "amd64")),
+    "https://github.com/prefix-dev/pixi/releases/latest/download/pixi-x86_64-unknown-linux-musl.tar.gz.sha256",
+    "checksum URL"
+)
+state.env.GITHUB_URL = "https://mirror.example/gh/"
+expect(
+    pixi.checksumURL(pixi.downloadURL("windows", "amd64")),
+    "https://mirror.example/gh/prefix-dev/pixi/releases/latest/download/pixi-x86_64-pc-windows-msvc.zip.sha256",
+    "mirror checksum URL"
+)
+state.env.GITHUB_URL = nil
+
+-- parseChecksum reads the digest that a .sha256 file holds, as sha256sum writes it. Anything whose
+-- first word is not 64 hexadecimal digits is not a checksum.
+local DIGEST = "6d2a576bde0a7b26533a068fec0aea6e4ee21c36668efc1dc73fce90110906ae"
+expect(pixi.parseChecksum(DIGEST .. "  pixi-x86_64-unknown-linux-musl.tar.gz\n"), DIGEST, "digest and name")
+expect(pixi.parseChecksum(DIGEST), DIGEST, "a bare digest")
+expect(pixi.parseChecksum(string.upper(DIGEST) .. "  pixi.tar.gz\n"), DIGEST, "upper case is lowercased")
+expect(pixi.parseChecksum("  \n" .. DIGEST .. " x\n"), DIGEST, "leading blanks are skipped")
+expect(pixi.parseChecksum(string.sub(DIGEST, 1, 63) .. "  x\n"), nil, "63 digits are not a checksum")
+expect(pixi.parseChecksum(DIGEST .. "0  x\n"), nil, "65 digits are not a checksum")
+expect(pixi.parseChecksum(string.sub(DIGEST, 1, 63) .. "g  x\n"), nil, "a non-hex digit is not a checksum")
+expect(pixi.parseChecksum("<html>Not Found</html>"), nil, "a page is not a checksum")
+expect(pixi.parseChecksum(""), nil, "an empty file is not a checksum")
+
 -- POSIX: a home with a space and an apostrophe stays one argument (issue #5).
 RUNTIME.osType = "linux"
 expect(

@@ -40,6 +40,23 @@ vfox config cache.availableHookDuration 0
 
 请求根本没有到达服务器：没有网络、DNS 错误、连接被拒绝，或代理丢弃了请求。请检查网络连接和 `GITHUB_URL` 的值。
 
+## 无法获取安装包的 SHA-256
+
+安装前，插件会读取 pixi 在安装包旁边发布的 SHA-256，地址是 `<GITHUB_URL>/prefix-dev/pixi/releases/latest/download/<安装包>.sha256`。返回 404 表示 pixi 没有为该安装包发布 SHA-256：安装会继续，并由 vfox 打印 `Checksum is not provided` 警告。其他响应都会让安装停止：
+
+- `status N`（状态码既不是 200，也不是 404）：该地址没有提供这个文件。请检查 `GITHUB_URL` 和镜像，与版本列表的处理方式相同。
+- `has no SHA-256 value`：该地址返回的是一个不是 SHA-256 文件的页面，通常是中间的代理或镜像给出了别的页面。请检查网络和镜像。
+
+## 无法请求安装包的 SHA-256
+
+请求根本没有到达服务器：没有网络、DNS 错误、连接被拒绝，或代理丢弃了请求。请检查网络连接和 `GITHUB_URL` 的值，与版本列表的处理方式相同。
+
+## 压缩包校验和不符
+
+症状：安装打印 `Verifying checksum <sha256>...`，接着打印 `Checksum error, file: <路径>`，并在解压之前停止。
+
+下载到的安装包不是 pixi 发布 SHA-256 时对应的那个文件。通常是下载中途被截断或在途中被改动，或者镜像上放的是另一个文件。请重新安装。如果安装过程中 pixi 发布了新版本，安装包与它的 SHA-256 可能分属两个版本；再次安装时，两者都会取自新版本。
+
 ## Failed to execute command: ... pixi ... global install
 
 pixi 无法从 conda 频道安装 clang。错误信息中会显示失败的命令，其上方输出的 pixi 日志说明了原因。常见原因是 conda-forge 被阻断或速度很慢，或者 `Conda_Forge` 的值不是一个频道。请重新运行安装：失败的安装不会留下任何残留，因此重试会从干净的状态开始。

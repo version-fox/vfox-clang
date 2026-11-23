@@ -168,6 +168,9 @@ func scenarioInstall(t *testing.T, s *Sandbox) {
 
 	install := s.VfoxRetry(t, nil, "install", "--yes", "clang@"+latest)
 	requireStatus(t, install, 0, "vfox install clang@"+latest)
+	// pixi publishes the SHA-256 of its archive, so vfox checks the download and prints no warning.
+	requireOutput(t, install, "vfox install clang@"+latest, "Verifying checksum")
+	requireNoOutput(t, install, "vfox install clang@"+latest, "Checksum is not provided")
 
 	clang := s.T.Join(s.InstallDir(), "v-"+latest, "clang-"+latest, "bin", s.T.Exe("clang"))
 	version := s.T.Run(t, nil, clang, "--version")

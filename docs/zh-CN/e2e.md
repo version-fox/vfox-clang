@@ -11,7 +11,7 @@
 1. **搜索**会从真实的 manifest 列出版本，`vfox search clang -- --no-cache` 也会列出版本（issue #3）。
 2. **HTTP 失败**会说明原因：404 会写出状态码，清单中没有列表会明确说明，镜像不可达会如实报告（issue #6）。测试中的假 GitHub 会给出各种错误的应答。
 3. **安装失败**后不会留下 `.installing` 标记和不完整的 `v-<版本>` 目录。这包括 pixi 始终失败的情况，以及清单中没有列出的版本（issue #4）。假 GitHub 提供一个 pixi 总是失败的版本。
-4. **主目录包含空格时的安装**：真实的 clang 从 conda-forge 安装到一个包含空格的主目录中，安装后的 `clang --version` 必须输出该版本号（issue #5）。
+4. **主目录包含空格时的安装**：真实的 clang 从 conda-forge 安装到一个包含空格的主目录中，安装后的 `clang --version` 必须输出该版本号（issue #5）。pixi 的安装包会与 pixi 发布的 SHA-256 核对，因此安装会打印 `Verifying checksum`，且不会出现缺少校验和的警告（issue #14）。
 5. **系统 clang 被发现并链接**：在各平台检测会查找的位置放一个假的 `clang`，`vfox link --detect clang --yes` 将其链接进来，`vfox list clang` 显示它，再次运行则不会发现新内容。两个平台都使用 `CONDA_PREFIX`，因此 runner 自己的 LLVM 安装不会干扰结果。在 `windows-latest` 上，套件设置的 `ProgramFiles` 没有传到插件里，搜索到的是 runner 自带的 Visual Studio 与 LLVM；Windows 上的各个查找目录由插件的离线测试检查。
 
 假 GitHub 运行在宿主机上，监听 `127.0.0.1`。插件通过 `GITHUB_URL` 访问它。
