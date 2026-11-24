@@ -96,7 +96,7 @@ clang 所用的 conda 频道，可以是 conda-forge 的镜像，例如 `https:/
 
 安装路径可以包含空格，Windows 用户目录和 macOS 账户名常常如此。
 
-`vfox search clang` 列出的是你所用平台上 conda-forge 发布的版本，因此有些平台列出的版本更少。在 Windows arm64 上，目前只列出最新版本。没有 pixi 安装包的平台不列出任何版本，参见[故障排查](docs/zh-CN/troubleshooting.md#unsupported-platform-x-y)。
+`vfox search clang` 列出的是你所用平台上 conda-forge 发布的版本，因此有些平台列出的版本更少。在 Windows arm64 上，列表可能只有最新的一个版本。没有 pixi 安装包的平台不列出任何版本，参见[故障排查](docs/zh-CN/troubleshooting.md#unsupported-platform-x-y)。
 
 ## 文档
 
@@ -109,7 +109,7 @@ clang 所用的 conda 频道，可以是 conda-forge 的镜像，例如 `https:/
 
 维护者可以在默认分支上进入 **Actions → Plugin → Run workflow**，输入不带 `v` 前缀的稳定版本号，
 发布插件。共享工作流会更新 `metadata.lua`、创建版本提交与标签，并在本仓库发布 ZIP 与 manifest。
-无需本地标签，也无需额外的发布令牌。Pull Request 只运行检查；PR 标题不再触发发布。
+无需本地标签，也无需额外的发布令牌。Pull Request 只运行检查；PR 标题不会触发发布。
 
 若 `PLUGIN.version` 已与标签一致，仍支持直接推送版本标签。发布失败时，重新运行原来失败的任务即可继续。
 

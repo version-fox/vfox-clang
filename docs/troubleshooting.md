@@ -48,6 +48,12 @@ answered with another page. Handle it the same way.
 The list is valid JSON, but it has no `conda-forge` entry. The manifest always has one, so the
 address serves something else. Check `GITHUB_URL`, then search again.
 
+## Failed to get versions: the version list has no version for X
+
+The list is valid JSON, but its entry for your platform's conda subdir, X (such as `win-arm64`), is
+empty. The workflow never writes an empty entry, so the address serves something else. Check
+`GITHUB_URL`, then search again.
+
 ## Failed to request the version list
 
 The request did not reach the server at all: no network, a DNS error, a refused connection,
