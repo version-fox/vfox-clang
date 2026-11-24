@@ -4,6 +4,16 @@
 
 按发布版本列出用户能感受到的变化。GitHub 的 Release 页面列出了对应的 PR。
 
+## 未发布
+
+### 新增
+
+- Windows arm64：插件现在可以在该平台上安装 clang，安装包来自 pixi 的 `pixi-aarch64-pc-windows-msvc.zip`，clang 来自 conda-forge 的 `win-arm64` 包（[#18](https://github.com/version-fox/vfox-clang/issues/18)）。conda-forge 只为 `vfox search clang` 中的部分版本在该平台发布 clang，`latest` 是其中之一，参见[平台](../../README_CN.md#平台)。
+
+### 修复
+
+- 不受支持的平台会以一条消息停止安装，消息写出该平台及受支持的平台，且不再附带 Lua 栈回溯（[#17](https://github.com/version-fox/vfox-clang/issues/17)）。参见[故障排查](troubleshooting.md#unsupported-platform-x-y)。
+
 ## 0.5.4（2026-11-23）
 
 ### 修复

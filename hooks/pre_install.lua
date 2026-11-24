@@ -44,7 +44,16 @@ end
 
 --- Resolves the requested version against the list and tells vfox where pixi is, and the SHA-256
 --- that pixi publishes for the archive, which vfox checks before it unpacks the archive.
+--- On a platform the plugin does not support, it prints the reason and returns no result.
 function PLUGIN:PreInstall(ctx)
+    local url, reason = pixi.downloadURL(RUNTIME.osType, RUNTIME.archType)
+    if url == nil then
+        -- An error raised here reaches the user with a Lua stack traceback. A hook that returns
+        -- no result stops the install too, and vfox then prints its own message after the reason.
+        print(reason)
+        return nil
+    end
+
     local list = versions.fetch()
     local version = ctx.version
     if version == "latest" then
@@ -54,7 +63,6 @@ function PLUGIN:PreInstall(ctx)
         error("Unsupported version: " .. tostring(ctx.version) .. ". Run `vfox search clang` to list the versions.")
     end
 
-    local url = pixi.downloadURL(RUNTIME.osType, RUNTIME.archType)
     return {
         url = url,
         version = version,

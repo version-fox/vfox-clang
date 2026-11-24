@@ -4,6 +4,21 @@
 
 What changed in each release, as a user notices it. GitHub's release pages list the pull requests.
 
+## Unreleased
+
+### Added
+
+- Windows arm64: the plugin installs clang there, from pixi's `pixi-aarch64-pc-windows-msvc.zip` and
+  conda-forge's `win-arm64` packages ([#18](https://github.com/version-fox/vfox-clang/issues/18)).
+  conda-forge publishes clang for that platform only for some of the versions in `vfox search clang`,
+  and `latest` is one of them; see [Platforms](../README.md#platforms).
+
+### Fixed
+
+- An unsupported platform stops the install with a message that names the platform and the supported
+  ones, and no Lua stack traceback ([#17](https://github.com/version-fox/vfox-clang/issues/17)). See
+  [troubleshooting.md](troubleshooting.md#unsupported-platform-x-y).
+
 ## 0.5.4 (2026-11-23)
 
 ### Fixed

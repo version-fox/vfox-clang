@@ -59,15 +59,15 @@ vfox config cache.availableHookDuration 0
 
 ## Failed to execute command: ... pixi ... global install
 
-pixi 无法从 conda 频道安装 clang。错误信息中会显示失败的命令，其上方输出的 pixi 日志说明了原因。常见原因是 conda-forge 被阻断或速度很慢，或者 `Conda_Forge` 的值不是一个频道。请重新运行安装：失败的安装不会留下任何残留，因此重试会从干净的状态开始。
+pixi 无法从 conda 频道安装 clang。错误信息中会显示失败的命令，其上方输出的 pixi 日志说明了原因。常见原因是 conda-forge 被阻断或速度很慢、`Conda_Forge` 的值不是一个频道，或者 conda-forge 没有为该平台发布所选的版本。在 Windows arm64 上，`vfox search clang` 列出的大多数版本都没有发布，参见[平台](../../README_CN.md#平台)。遇到最后一种情况，请安装 `latest`；否则请重新运行安装：失败的安装不会留下任何残留，因此重试会从干净的状态开始。
 
 ## Unsupported version: X
 
 该版本不在插件读取的列表中。运行 `vfox search clang` 查看可用版本；如果列表已过期，改用 `vfox search clang -- --no-cache`。
 
-## Unsupported environment: windows-arm64
+## Unsupported platform: X-Y
 
-插件支持 Linux x86_64 与 arm64、macOS x86_64 与 arm64，以及 Windows x86_64。其他平台会在下载任何内容之前停止。
+vfox 以 `<系统>-<架构>` 的形式报告平台，例如 `freebsd-amd64`，错误信息会写出该平台。插件支持 Linux x86_64 与 arm64、macOS x86_64 与 arm64，以及 Windows x86_64 与 arm64。在其他平台上，安装会在下载任何内容之前停止。信息之后的 `no installable runtime provided` 是 vfox 对这次停止的报告。
 
 ## unexpected EOF while downloading
 

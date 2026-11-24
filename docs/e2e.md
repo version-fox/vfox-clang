@@ -9,7 +9,7 @@ runs without network access or processes, are described in [development.md](deve
 
 ## What the suites check
 
-Both platforms run the same five scenarios, from `tests/e2e/common/scenarios.go`:
+All three suites run the same five scenarios, from `tests/e2e/common/scenarios.go`:
 
 1. **Search** lists the versions from the real manifest, and `vfox search clang -- --no-cache`
    lists them too (issue #3).
@@ -64,6 +64,10 @@ directory of its own, with a HOME named `home with space` inside it. The suite r
 variables that would change vfox's behavior (`GITHUB_URL`, `Conda_Forge`, `CONDA_PREFIX`,
 `VFOX_HOME`, `HOME`, `USERPROFILE`, `CI`) and sets only the ones a scenario needs. Every sandbox also sets `PIXI_CACHE_DIR` to a folder inside it, and on Windows `LOCALAPPDATA` and `APPDATA` to folders inside its HOME. pixi reads `PIXI_CACHE_DIR` before it asks Windows for the cache folder. On the `windows-latest` runner that question failed with `could not determine default cache directory`, so the sandbox does not depend on the answer.
 
+CI runs the suite on two runners: `windows-latest` (x86_64) and `windows-11-arm` (arm64). Each one
+downloads the vfox and pixi builds of its own architecture, so the arm64 run checks that clang from
+conda-forge's `win-arm64` packages runs on arm64 Windows.
+
 From the repository root, in PowerShell:
 
 ``` powershell
@@ -91,6 +95,6 @@ the output of its last attempt.
 
 - macOS: the offline Lua tests simulate `darwin`, and the glua test runs the real shell on Linux.
   No suite runs vfox on macOS.
-- arm64 hosts, and Windows arm64, which the plugin does not support.
+- Linux arm64: the Linux suite runs on x86_64 containers only.
 - Other vfox releases: the suites pin 1.1.0, the release the `vfox link` and `--` behavior is
   checked with.

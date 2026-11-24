@@ -6,7 +6,7 @@
 
 ## 套件检查什么
 
-两个平台运行的是同一组五个场景，定义在 `tests/e2e/common/scenarios.go` 中：
+三个套件运行的是同一组五个场景，定义在 `tests/e2e/common/scenarios.go` 中：
 
 1. **搜索**会从真实的 manifest 列出版本，`vfox search clang -- --no-cache` 也会列出版本（issue #3）。
 2. **HTTP 失败**会说明原因：404 会写出状态码，清单中没有列表会明确说明，镜像不可达会如实报告（issue #6）。测试中的假 GitHub 会给出各种错误的应答。
@@ -39,6 +39,8 @@ rootless Docker 同样可用：套件不依赖容器内对绑定挂载目录的�
 
 `tests/e2e/windows` 直接在 Windows 主机上运行，不使用容器。Windows 容器需要 Windows 版的 Docker 引擎和大得多的镜像，而这里的检查并不需要它。每个场景在自己的临时目录中运行，其中的 HOME 名为 `home with space`。套件会移除可能改变 vfox 行为的宿主机变量（`GITHUB_URL`、`Conda_Forge`、`CONDA_PREFIX`、`VFOX_HOME`、`HOME`、`USERPROFILE`、`CI`），只设置场景需要的变量。每个沙箱还会把 `PIXI_CACHE_DIR` 指向其内部的目录，在 Windows 上把 `LOCALAPPDATA` 与 `APPDATA` 指向其 HOME 内的目录。pixi 会先读取 `PIXI_CACHE_DIR`，然后才向 Windows 询问缓存目录。`windows-latest` runner 上这一询问失败，报错为 `could not determine default cache directory`，因此沙箱不依赖它的答复。
 
+CI 在两台 runner 上运行该套件：`windows-latest`（x86_64）与 `windows-11-arm`（arm64）。每台 runner 下载与其架构相符的 vfox 与 pixi，因此 arm64 的运行会检查 conda-forge 的 `win-arm64` 包中的 clang 能否在 arm64 Windows 上运行。
+
 在仓库根目录的 PowerShell 中执行：
 
 ``` powershell
@@ -63,5 +65,5 @@ go test -v -timeout 55m -run TestE2E .\windows
 ## 未覆盖的范围
 
 - macOS：离线 Lua 测试模拟了 `darwin`，glua 测试在 Linux 上运行真实的 shell。没有任何套件在 macOS 上运行 vfox。
-- arm64 主机，以及插件不支持的 Windows arm64。
+- Linux arm64：Linux 套件只在 x86_64 容器中运行。
 - 其他 vfox 版本：套件固定使用 1.1.0，`vfox link` 与 `--` 的行为都是以该版本验证的。
