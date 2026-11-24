@@ -77,7 +77,7 @@ crystal build --release --no-debug .github/UpdateVersionList.cr -o /tmp/UpdateVe
 /tmp/UpdateVersionList -o /tmp/manifest.md
 ```
 
-只有清单发生变化时，工具才会写出 `manifest.md`：conda-forge 上出现了比列表更新的 clang，或者某个平台上发布的版本变了。清单包含 conda-forge 列表，并在每个 conda 子目录（如 `linux-64`、`win-arm64`）下列出该列表中 conda-forge 为它发布的版本。它的输出就是 `manifest` 发布页的正文，插件从那里读取版本列表。工具从 prefix.dev 接口读取每个版本的平台。以下任一情况发生时，工具都会停止，且不写出任何内容：prefix.dev 返回错误；列表中某个版本在那里没有平台信息；列表中没有任何版本发布于某个子目录。
+只有清单发生变化时，工具才会写出 `manifest.md`：conda-forge 上出现了比列表更新的 clang，或者某个平台上发布的版本变了。清单包含 conda-forge 列表，并在每个 conda 子目录（如 `linux-64`、`win-arm64`）下列出该列表中 conda-forge 为它发布的版本。它的输出就是 `manifest` 发布页的正文，插件从那里读取版本列表。工具从 prefix.dev 接口读取每个版本的平台。以下任一情况发生时，工具都会报错停止，且不写出任何内容：清单或 prefix.dev 无法读取，或 prefix.dev 返回错误；prefix.dev 上没有任何 clang 版本；列表中某个版本在那里没有平台信息；列表中没有任何版本发布于某个子目录。
 
 ## 开发容器
 

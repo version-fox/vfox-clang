@@ -102,9 +102,10 @@ The tool writes `manifest.md` only when the manifest changes: when conda-forge h
 the list, or when the versions published for a platform change. The manifest holds the conda-forge
 list, and under each conda subdir (`linux-64`, `win-arm64` and so on) the versions of that list that
 conda-forge publishes for it. Its output is the body of the `manifest` release, which the plugin reads.
-The tool reads each version's platforms from the prefix.dev API. It writes nothing when prefix.dev
-answers with an error, when a version of the list has no platforms there, or when no version of the
-list is published for one of the subdirs.
+The tool reads each version's platforms from the prefix.dev API. It stops with an error and writes
+nothing when the manifest or prefix.dev cannot be read or answers with an error, when prefix.dev lists
+no version of clang, when a version of the list has no platforms there, or when no version of the list
+is published for one of the subdirs.
 
 ## Development container
 
