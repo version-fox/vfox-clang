@@ -50,8 +50,11 @@ differently from the release the plugin is checked with.
 - Format with stylua; `stylua.toml` sets 120 columns and four spaces.
 - Modules return a table; hooks call them. Shared helpers live in `lib/util.lua`.
 - Do not call `os.exit`. A hook that exits the process skips vfox's cleanup, so a failed install
-  leaves a marker and a partial directory behind (issue #4). Raise an error instead, with a message
-  that says what went wrong.
+  leaves a marker and a partial directory behind (issue #4). Raise an error for a failure, with a
+  message that says what went wrong. An error raised in a hook reaches the user with a Lua stack
+  traceback, so a request the plugin cannot serve, such as an unsupported platform or a version the
+  platform does not list, prints its reason and returns no result instead (see
+  `hooks/pre_install.lua`). vfox then stops the install with its own message.
 - Quote every path and argument that goes to the shell with `util.quote`, which is single quotes on
   Unix and double quotes for cmd.exe on Windows. Build Windows command lines with
   `pixi.silenced`, which wraps the whole line as cmd.exe requires.
@@ -86,8 +89,9 @@ run.
 
 ## Changing the version list
 
-The Update version list workflow builds `.github/UpdateVersionList.cr` with Crystal 1.22.3 on every
-run, so the repository keeps no binary. To build it locally:
+The Check Updates Periodically workflow (`.github/workflows/update-version-list.yml`) builds
+`.github/UpdateVersionList.cr` with Crystal 1.22.3 on every run, so the repository keeps no
+binary. To build it locally:
 
 ``` shell
 crystal build --release --no-debug .github/UpdateVersionList.cr -o /tmp/UpdateVersionList
@@ -98,8 +102,10 @@ The tool writes `manifest.md` only when the manifest changes: when conda-forge h
 the list, or when the versions published for a platform change. The manifest holds the conda-forge
 list, and under each conda subdir (`linux-64`, `win-arm64` and so on) the versions of that list that
 conda-forge publishes for it. Its output is the body of the `manifest` release, which the plugin reads.
-The tool reads each version's platforms from the prefix.dev API, and it stops without writing anything
-when a version of the list has no platforms there.
+The tool reads each version's platforms from the prefix.dev API. It stops with an error and writes
+nothing when the manifest or prefix.dev cannot be read or answers with an error, when prefix.dev lists
+no version of clang, when a version of the list has no platforms there, or when no version of the list
+is published for one of the subdirs.
 
 ## Development container
 

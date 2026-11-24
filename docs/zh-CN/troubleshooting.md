@@ -36,6 +36,10 @@ vfox config cache.availableHookDuration 0
 
 列表是合法的 JSON，但其中没有 `conda-forge` 条目。插件读取的 manifest 总有这一条，因此该地址提供的是别的内容。请检查 `GITHUB_URL`，然后重新搜索。
 
+## Failed to get versions: the version list has no version for X
+
+列表是合法的 JSON，但插件所用平台的 conda 子目录 X（例如 `win-arm64`）下的条目是空的。工作流从不写出空条目，因此该地址提供的是别的内容。请检查 `GITHUB_URL`，然后重新搜索。
+
 ## Failed to request the version list
 
 请求根本没有到达服务器：没有网络、DNS 错误、连接被拒绝，或代理丢弃了请求。请检查网络连接和 `GITHUB_URL` 的值。

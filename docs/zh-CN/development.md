@@ -46,7 +46,7 @@ Go 相关命令在 `tests/e2e` 中执行，其余命令在仓库根目录执行�
 - 每个已有文件顶部的 Apache 2.0 许可证头都要保留，新文件请从 `lib/util.lua` 复制。缺少许可证头时许可证检查会失败。
 - 使用 stylua 格式化；`stylua.toml` 设定每行 120 列、四个空格缩进。
 - 模块返回一个表，钩子调用这些模块。共用的辅助函数放在 `lib/util.lua`。
-- 不要调用 `os.exit`。退出进程会跳过 vfox 的清理，于是失败的安装会留下标记和不完整的目录（issue #4）。应当抛出错误，并写明出了什么问题。
+- 不要调用 `os.exit`。退出进程会跳过 vfox 的清理，于是失败的安装会留下标记和不完整的目录（issue #4）。失败时应当抛出错误，并写明出了什么问题。钩子中抛出的错误会附带 Lua 栈回溯，因此对于插件无法满足的请求（例如不支持的平台，或平台列表中没有的版本），应当打印原因且不返回任何结果，参见 `hooks/pre_install.lua`；vfox 随后会以它自己的消息停止安装。
 - 传给 shell 的每个路径和参数都要用 `util.quote` 加引号：Unix 上是单引号，Windows 上是 cmd.exe 所需的双引号。Windows 命令行请用 `pixi.silenced` 构造，它会按 cmd.exe 的要求把整行包上引号。
 - 读取命令输出时用 `read("*a")` 整体读取，再自行切分行。Windows 上 vfox 的 `io.popen` 句柄只有 `read` 和 `close`，`lines` 只存在于 Unix。在 Linux 上调用 `lines` 的测试会通过，同样的代码却会在 Windows runner 上失败。
 
@@ -70,14 +70,14 @@ state.answer = { status_code = 404, body = "" }   -- 处理器能看到这个值
 
 ## 更新版本列表
 
-Update version list 工作流每次运行时都会用 Crystal 1.22.3 从 `.github/UpdateVersionList.cr` 构建工具，因此仓库中不保存二进制文件。本地构建方法：
+Check Updates Periodically 工作流（`.github/workflows/update-version-list.yml`）每次运行时都会用 Crystal 1.22.3 从 `.github/UpdateVersionList.cr` 构建工具，因此仓库中不保存二进制文件。本地构建方法：
 
 ``` shell
 crystal build --release --no-debug .github/UpdateVersionList.cr -o /tmp/UpdateVersionList
 /tmp/UpdateVersionList -o /tmp/manifest.md
 ```
 
-只有清单发生变化时，工具才会写出 `manifest.md`：conda-forge 上出现了比列表更新的 clang，或者某个平台上发布的版本变了。清单包含 conda-forge 列表，并在每个 conda 子目录（如 `linux-64`、`win-arm64`）下列出该列表中 conda-forge 为它发布的版本。它的输出就是 `manifest` 发布页的正文，插件从那里读取版本列表。工具从 prefix.dev 接口读取每个版本的平台；若列表中某个版本在那里没有平台信息，工具会停止，且不写出任何内容。
+只有清单发生变化时，工具才会写出 `manifest.md`：conda-forge 上出现了比列表更新的 clang，或者某个平台上发布的版本变了。清单包含 conda-forge 列表，并在每个 conda 子目录（如 `linux-64`、`win-arm64`）下列出该列表中 conda-forge 为它发布的版本。它的输出就是 `manifest` 发布页的正文，插件从那里读取版本列表。工具从 prefix.dev 接口读取每个版本的平台。以下任一情况发生时，工具都会报错停止，且不写出任何内容：清单或 prefix.dev 无法读取，或 prefix.dev 返回错误；prefix.dev 上没有任何 clang 版本；列表中某个版本在那里没有平台信息；列表中没有任何版本发布于某个子目录。
 
 ## 开发容器
 

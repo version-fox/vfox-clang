@@ -9,7 +9,7 @@ runs without network access or processes, are described in [development.md](deve
 
 ## What the suites check
 
-All three suites run the same five scenarios, from `tests/e2e/common/scenarios.go`:
+The three CI jobs run the same five scenarios, from `tests/e2e/common/scenarios.go`:
 
 1. **Search** lists the versions from the real manifest, and `vfox search clang -- --no-cache`
    lists them too (issue #3).
@@ -25,10 +25,10 @@ All three suites run the same five scenarios, from `tests/e2e/common/scenarios.g
    prints `Verifying checksum` and no warning about a missing checksum (issue #14).
 5. **A system clang is detected and linked**: a fake `clang` in a folder that `CONDA_PREFIX`
    names, `vfox link --detect clang --yes` links it, `vfox list clang` shows it, and a second run
-   finds nothing new. Both suites use `CONDA_PREFIX`, so the runner's own LLVM installs stay out of
-   the way. On `windows-latest`, `ProgramFiles` did not reach the plugin when the suite set it, and
-   the search found the runner's Visual Studio and LLVM instead; the Windows folders of the plugin
-   are checked by its offline tests.
+   finds nothing new. In every job the scenario sets `CONDA_PREFIX` to a folder in the sandbox, so
+   the runner's own LLVM installs stay out of the way. On `windows-latest`, `ProgramFiles` did not
+   reach the plugin when the suite set it, and the search found the runner's Visual Studio and LLVM
+   instead; the Windows folders of the plugin are checked by its offline tests.
 
 The fake GitHub runs on the host and listens on `127.0.0.1`. The plugin reaches it through
 `GITHUB_URL`.
