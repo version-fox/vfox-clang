@@ -75,9 +75,11 @@ export GITHUB_URL=https://mirror.example.com/https://github.com/
 
 ## 镜像
 
-`GITHUB_URL` 会把插件的两处 GitHub 下载改到镜像：版本列表
-（`<GITHUB_URL>/version-fox/vfox-clang/releases/manifest`）和 pixi 的安装包
-（`<GITHUB_URL>/prefix-dev/pixi/releases/latest/download/…`）。`Conda_Forge` 是 pixi 安装
+`GITHUB_URL` 会把插件的 GitHub 下载改到镜像：版本列表
+（`<GITHUB_URL>/version-fox/vfox-clang/releases/manifest`），以及 pixi 的安装包和它旁边的
+`.sha256` 文件（`<GITHUB_URL>/prefix-dev/pixi/releases/latest/download/…`）。插件会用该 SHA-256
+核对安装包；镜像若对 `.sha256` 地址既不返回文件也不返回 404，安装会停止，参见
+[故障排查](docs/zh-CN/troubleshooting.md#无法获取安装包的-sha-256)。`Conda_Forge` 是 pixi 安装
 clang 所用的 conda 频道，可以是 conda-forge 的镜像，例如 `https://prefix.dev/conda-forge`。
 请在需要它们的命令之前设置。
 
