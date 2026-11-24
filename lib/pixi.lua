@@ -24,6 +24,23 @@ local ARCHITECTURES = {
     amd64 = "x86_64",
 }
 
+--- Maps the platform vfox reports to the conda subdir that conda-forge names it by. The version
+--- list has one entry per subdir, with the versions conda-forge publishes for that platform.
+local SUBDIRS = {
+    linux = { amd64 = "linux-64", arm64 = "linux-aarch64" },
+    darwin = { amd64 = "osx-64", arm64 = "osx-arm64" },
+    windows = { amd64 = "win-64", arm64 = "win-arm64" },
+}
+
+--- Returns the conda subdir of the platform, or nil when the plugin does not support the platform.
+function pixi.subdir(osType, archType)
+    local byArch = SUBDIRS[osType]
+    if byArch == nil then
+        return nil
+    end
+    return byArch[archType]
+end
+
 --- Names the platforms the plugin installs clang on, in the reason for any other platform.
 local SUPPORTED = "Linux x86_64 and arm64, macOS x86_64 and arm64, and Windows x86_64 and arm64"
 

@@ -77,7 +77,7 @@ crystal build --release --no-debug .github/UpdateVersionList.cr -o /tmp/UpdateVe
 /tmp/UpdateVersionList -o /tmp/manifest.md
 ```
 
-只有当 conda-forge 上的 clang 比列表中的新时，工具才会写出 `manifest.md`。它的输出就是 `manifest` 发布页的正文，插件从那里读取版本列表。
+只有清单发生变化时，工具才会写出 `manifest.md`：conda-forge 上出现了比列表更新的 clang，或者某个平台上发布的版本变了。清单包含 conda-forge 列表，并在每个 conda 子目录（如 `linux-64`、`win-arm64`）下列出该列表中 conda-forge 为它发布的版本。它的输出就是 `manifest` 发布页的正文，插件从那里读取版本列表。工具从 prefix.dev 接口读取每个版本的平台；若列表中某个版本在那里没有平台信息，工具会停止，且不写出任何内容。
 
 ## 开发容器
 

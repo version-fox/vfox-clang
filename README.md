@@ -4,8 +4,8 @@
 
 [Clang](https://clang.llvm.org/) plugin for [vfox](https://vfox.lhan.me). The clang
 packages come from [conda-forge](https://conda-forge.org/), installed by
-[pixi](https://pixi.sh/), so `vfox search clang` lists the versions conda-forge publishes.
-Not every platform has every version; see [Platforms](#platforms).
+[pixi](https://pixi.sh/), so `vfox search clang` lists the versions conda-forge publishes for
+your platform. Not every platform has every version; see [Platforms](#platforms).
 
 ## Requirements
 
@@ -100,9 +100,9 @@ conda-forge such as `https://prefix.dev/conda-forge`. Set them before the comman
 Install paths may contain spaces, as a Windows user profile or a macOS account name
 often does.
 
-On Windows arm64, conda-forge publishes clang for only some of the versions in `vfox search clang`.
-`latest` is one of them, so install `latest` there. Installing another version stops in pixi with an
-error; see [troubleshooting](docs/troubleshooting.md#failed-to-execute-command--pixi--global-install).
+`vfox search clang` lists the versions that conda-forge publishes for the platform you are on, so some
+platforms list fewer. On Windows arm64 that is only the latest version at the time of writing. A platform
+without a pixi archive lists nothing; see [troubleshooting](docs/troubleshooting.md#unsupported-platform-x-y).
 
 ## Documentation
 

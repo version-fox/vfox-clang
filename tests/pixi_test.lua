@@ -61,6 +61,16 @@ expect(pixi.asset("darwin", "arm64"), "pixi-aarch64-apple-darwin.tar.gz", "darwi
 expect(pixi.asset("windows", "amd64"), "pixi-x86_64-pc-windows-msvc.zip", "windows amd64")
 expect(pixi.asset("windows", "arm64"), "pixi-aarch64-pc-windows-msvc.zip", "windows arm64")
 
+-- The conda subdir of each platform names its entry in the version list.
+expect(pixi.subdir("linux", "amd64"), "linux-64", "subdir linux amd64")
+expect(pixi.subdir("linux", "arm64"), "linux-aarch64", "subdir linux arm64")
+expect(pixi.subdir("darwin", "amd64"), "osx-64", "subdir darwin amd64")
+expect(pixi.subdir("darwin", "arm64"), "osx-arm64", "subdir darwin arm64")
+expect(pixi.subdir("windows", "amd64"), "win-64", "subdir windows amd64")
+expect(pixi.subdir("windows", "arm64"), "win-arm64", "subdir windows arm64")
+expect(pixi.subdir("windows", "386"), nil, "no subdir for an unsupported architecture")
+expect(pixi.subdir("macos", "arm64"), nil, "no subdir for macos")
+
 -- A platform without an archive has no asset. The reason names the platform and the supported
 -- platforms, and nothing is raised, so the hook can print it without a stack traceback.
 local SUPPORTED = "Linux x86_64 and arm64, macOS x86_64 and arm64, and Windows x86_64 and arm64"

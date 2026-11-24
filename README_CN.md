@@ -4,7 +4,7 @@
 
 [Clang](https://clang.llvm.org/) 的 [vfox](https://vfox.lhan.me) 插件。clang 包来自
 [conda-forge](https://conda-forge.org/)，由 [pixi](https://pixi.sh/) 安装，因此
-`vfox search clang` 列出的是 conda-forge 发布的版本。并非每个平台都有全部版本，参见[平台](#平台)。
+`vfox search clang` 列出的是 conda-forge 为你的平台发布的版本。并非每个平台都有全部版本，参见[平台](#平台)。
 
 ## 环境要求
 
@@ -96,7 +96,7 @@ clang 所用的 conda 频道，可以是 conda-forge 的镜像，例如 `https:/
 
 安装路径可以包含空格，Windows 用户目录和 macOS 账户名常常如此。
 
-Windows arm64 上，conda-forge 只为 `vfox search clang` 列出的部分版本发布 clang。`latest` 是其中之一，请安装 `latest`。安装其他版本会在 pixi 中以错误停止，参见[故障排查](docs/zh-CN/troubleshooting.md#failed-to-execute-command--pixi--global-install)。
+`vfox search clang` 列出的是你所用平台上 conda-forge 发布的版本，因此有些平台列出的版本更少。在 Windows arm64 上，目前只列出最新版本。没有 pixi 安装包的平台不列出任何版本，参见[故障排查](docs/zh-CN/troubleshooting.md#unsupported-platform-x-y)。
 
 ## 文档
 

@@ -84,16 +84,16 @@ gets both from the new one.
 
 pixi could not install clang from the conda channel. The message shows the command that
 failed; the output printed above it, from pixi, says why. Common causes are a blocked or
-slow conda-forge, a `Conda_Forge` value that is not a channel, and a version that conda-forge
-does not publish for the platform. On Windows arm64 most versions in `vfox search clang` are
-not published; see [Platforms](../README.md#platforms). For a version the platform does not
-have, install `latest`. Otherwise run the install again: a failed install leaves nothing
-behind, so the retry starts clean.
+slow conda-forge and a `Conda_Forge` value that is not a channel. Run the install again: a
+failed install leaves nothing behind, so the retry starts clean.
 
 ## Unsupported version: X
 
-The version is not in the list that the plugin reads. Run `vfox search clang` for the
-versions, or `vfox search clang -- --no-cache` if the list is old.
+The version is not in the list for your platform, which is the list `vfox search clang` shows.
+Run `vfox search clang` for the versions, or `vfox search clang -- --no-cache` if the list is old.
+The install stops with that message and without a stack traceback; the line after it,
+`no installable runtime provided`, is vfox's report of the stop. Platforms differ in their
+versions; see [Platforms](../README.md#platforms).
 
 ## Unsupported platform: X-Y
 
@@ -101,7 +101,7 @@ vfox reports the platform as `<OS>-<architecture>`, for example `freebsd-amd64`,
 message names it. The plugin installs clang on Linux x86_64 and arm64, macOS x86_64 and arm64,
 and Windows x86_64 and arm64. On any other platform the install stops before it downloads
 anything. The line after the message, `no installable runtime provided`, is vfox's report of
-that stop.
+that stop. `vfox search clang` lists no version on such a platform, and prints the same message.
 
 ## unexpected EOF while downloading
 

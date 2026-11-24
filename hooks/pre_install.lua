@@ -60,7 +60,14 @@ function PLUGIN:PreInstall(ctx)
         version = list[1]
     end
     if version == nil or not util.contains(list, version) then
-        error("Unsupported version: " .. tostring(ctx.version) .. ". Run `vfox search clang` to list the versions.")
+        -- Like an unsupported platform: the reason is printed, and no result stops the install
+        -- without a stack traceback. A failure to read the list is still an error.
+        print(
+            "Unsupported version: "
+                .. tostring(ctx.version)
+                .. ". Run `vfox search clang` to list the versions for this platform."
+        )
+        return nil
     end
 
     return {
