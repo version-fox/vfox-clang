@@ -53,6 +53,8 @@ local LINUX_ARCHIVE = "pixi-x86_64-unknown-linux-musl.tar.gz"
 local LINUX_DIGEST = "6d2a576bde0a7b26533a068fec0aea6e4ee21c36668efc1dc73fce90110906ae"
 local DARWIN_ARCHIVE = "pixi-aarch64-apple-darwin.tar.gz"
 local DARWIN_DIGEST = "039d4b48c7e17bc62a36faa2af1b13d0d187f5dd6e8fea17e0587302438df6e6"
+local WINDOWS_ARM64_ARCHIVE = "pixi-aarch64-pc-windows-msvc.zip"
+local WINDOWS_ARM64_DIGEST = "2c8d16e4f1a3600e587c0157ddb25f9a046b41da275e2125f0384e94841a45e6"
 
 local function expect(got, want, label)
     assert(got == want, ("%s: want %q, got %q"):format(label, tostring(want), tostring(got)))
@@ -103,6 +105,76 @@ expect(last_request(), RELEASE .. DARWIN_ARCHIVE .. ".sha256", "darwin arm64 .sh
 RUNTIME.osType = "linux"
 RUNTIME.archType = "amd64"
 
+-- Windows arm64 has an archive of its own, and its SHA-256 is requested next to it.
+RUNTIME.osType = "windows"
+RUNTIME.archType = "arm64"
+state.checksum = { status_code = 200, body = WINDOWS_ARM64_DIGEST .. "  " .. WINDOWS_ARM64_ARCHIVE .. "\n" }
+install = plugin:PreInstall({ version = "22.1.3" })
+expect(install.url, RELEASE .. WINDOWS_ARM64_ARCHIVE, "windows arm64 archive")
+expect(install.sha256, WINDOWS_ARM64_DIGEST, "windows arm64 SHA-256")
+expect(last_request(), RELEASE .. WINDOWS_ARM64_ARCHIVE .. ".sha256", "windows arm64 .sha256 URL")
+RUNTIME.osType = "linux"
+RUNTIME.archType = "amd64"
+
+-- A platform without an archive returns no result and prints the reason, which names the platform
+-- and the supported ones. It raises no error, so vfox prints no stack traceback, and it requests
+-- nothing: the version list is not read either.
+local realPrint = print
+local printed = {}
+print = function(...)
+    table.insert(printed, table.concat({ ... }, "\t"))
+end
+RUNTIME.osType = "freebsd"
+local requestsBeforeUnsupported = #state.requested
+local noResult = plugin:PreInstall({ version = "latest" })
+print = realPrint
+RUNTIME.osType = "linux"
+expect(noResult, nil, "an unsupported platform returns no result")
+expect(#printed, 1, "an unsupported platform prints the reason once")
+assert(
+    printed[1]:find("Unsupported platform: freebsd-amd64. The plugin installs clang on Linux x86_64", 1, true),
+    "the reason names the platform and the supported ones: " .. printed[1]
+)
+expect(#state.requested, requestsBeforeUnsupported, "an unsupported platform requests nothing")
+
+-- The search on the same platform lists nothing and prints the same reason.
+local printedSearch = {}
+print = function(...)
+    table.insert(printedSearch, table.concat({ ... }, "\t"))
+end
+RUNTIME.osType = "freebsd"
+local listed = plugin:Available({ args = {} })
+print = realPrint
+RUNTIME.osType = "linux"
+expect(#listed, 0, "the search on an unsupported platform lists no version")
+expect(#printedSearch, 1, "the search on an unsupported platform prints the reason once")
+assert(printedSearch[1]:find("Unsupported platform: freebsd-amd64.", 1, true), printedSearch[1])
+
+-- Windows arm64 has a list of its own: 22.1.3 is not published there, so it is refused, and
+-- latest is the newest version that is.
+state.answer = {
+    status_code = 200,
+    body = '<code>{"conda-forge": ["23.1.6", "22.1.3"], "win-arm64": ["23.1.6"]}</code>',
+}
+state.checksum = { status_code = 200, body = WINDOWS_ARM64_DIGEST .. "  " .. WINDOWS_ARM64_ARCHIVE .. "\n" }
+RUNTIME.osType = "windows"
+RUNTIME.archType = "arm64"
+install = plugin:PreInstall({ version = "latest" })
+expect(install.version, "23.1.6", "latest is the newest version published for the platform")
+local refusedPrinted = {}
+print = function(...)
+    table.insert(refusedPrinted, table.concat({ ... }, "\t"))
+end
+local refused = plugin:PreInstall({ version = "22.1.3" })
+print = realPrint
+expect(refused, nil, "a version the platform lacks returns no result")
+expect(#refusedPrinted, 1, "a version the platform lacks prints the reason once")
+assert(refusedPrinted[1]:find("Unsupported version: 22.1.3.", 1, true), "refused: " .. refusedPrinted[1])
+assert(refusedPrinted[1]:find("for this platform", 1, true), "the reason says the list is for this platform")
+RUNTIME.osType = "linux"
+RUNTIME.archType = "amd64"
+state.answer = manifest
+
 -- A SHA-256 that cannot be read stops the install: a published value is never skipped.
 state.checksum = { status_code = 500, body = "Internal Server Error" }
 local message = failure_of(function()
@@ -128,14 +200,19 @@ end)
 assert(message:find("Failed to request the SHA-256 of the archive", 1, true), "transport: " .. message)
 assert(message:find("connection refused", 1, true), "transport keeps the cause: " .. message)
 
--- An unlisted version is an error that names the search command, not an exit. It is
--- refused before the SHA-256 is asked for, so only the version list is requested.
+-- An unlisted version is refused with the reason, which names the search command, and no result.
+-- It is refused before the SHA-256 is asked for, so only the version list is requested.
 local requestsBefore = #state.requested
-message = failure_of(function()
-    plugin:PreInstall({ version = "1.0.0" })
-end)
-assert(message:find("Unsupported version: 1.0.0", 1, true), "unlisted version message: " .. message)
-assert(message:find("vfox search clang", 1, true), "the message names the search command")
+local unlistedPrinted = {}
+print = function(...)
+    table.insert(unlistedPrinted, table.concat({ ... }, "\t"))
+end
+local unlisted = plugin:PreInstall({ version = "1.0.0" })
+print = realPrint
+expect(unlisted, nil, "an unlisted version returns no result")
+expect(#unlistedPrinted, 1, "an unlisted version prints the reason once")
+assert(unlistedPrinted[1]:find("Unsupported version: 1.0.0.", 1, true), "unlisted version: " .. unlistedPrinted[1])
+assert(unlistedPrinted[1]:find("vfox search clang", 1, true), "the reason names the search command")
 expect(#state.requested, requestsBefore + 1, "an unlisted version requests no SHA-256")
 expect(last_request(), "https://github.com/version-fox/vfox-clang/releases/manifest", "the version list URL")
 

@@ -16,6 +16,7 @@
 --- the `manifest` release, which the Update version list workflow keeps current.
 local http = require("http")
 local json = require("json")
+local pixi = require("pixi")
 local util = require("util")
 
 local versions = {}
@@ -27,8 +28,24 @@ local MANIFEST_PATH = "/version-fox/vfox-clang/releases/manifest"
 --- directory. vfox names it with a leading dot.
 local CACHE_FILE = ".available.cache"
 
---- Fetches the version list and returns it as a Lua array, newest first. Every
---- failure is raised as an error that names what went wrong, so vfox can show it.
+--- Returns the versions for the platform. The manifest lists under the conda subdir of each
+--- platform the versions that conda-forge publishes there. A manifest without that entry gives
+--- the whole conda-forge list, as manifests did before the entries were added.
+local function platformList(manifest, all)
+    local subdir = pixi.subdir(RUNTIME.osType, RUNTIME.archType)
+    if subdir == nil or manifest[subdir] == nil then
+        return all
+    end
+    local list = manifest[subdir]
+    if type(list) ~= "table" or #list == 0 then
+        error("Failed to get versions: the version list has no version for " .. subdir)
+    end
+    return list
+end
+
+--- Fetches the version list and returns it as a Lua array, newest first, with the versions that
+--- conda-forge publishes for the platform. Every failure is raised as an error that names what went
+--- wrong, so vfox can show it.
 function versions.fetch()
     local resp, err = http.get({
         url = util.githubURL() .. MANIFEST_PATH,
@@ -51,11 +68,11 @@ function versions.fetch()
     if manifest == nil then
         error("Failed to get versions: the version list is not valid JSON: " .. tostring(decodeErr))
     end
-    local list = type(manifest) == "table" and manifest["conda-forge"] or nil
-    if type(list) ~= "table" then
+    local all = type(manifest) == "table" and manifest["conda-forge"] or nil
+    if type(all) ~= "table" then
         error("Failed to get versions: the version list has no conda-forge entry")
     end
-    return list
+    return platformList(manifest, all)
 end
 
 --- Returns the entries of the Available hook: every version, the first marked

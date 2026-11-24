@@ -86,7 +86,11 @@ func TestBuildPluginZipPacksTheHooksAndLibrary(t *testing.T) {
 
 func TestPixiArchiveRoundTrips(t *testing.T) {
 	binary := []byte("#!fake pixi")
-	for _, asset := range []string{"pixi-x86_64-unknown-linux-musl.tar.gz", "pixi-x86_64-pc-windows-msvc.zip"} {
+	for _, asset := range []string{
+		"pixi-x86_64-unknown-linux-musl.tar.gz",
+		"pixi-x86_64-pc-windows-msvc.zip",
+		"pixi-aarch64-pc-windows-msvc.zip",
+	} {
 		archive, err := pixiArchive(asset, "pixi", binary)
 		if err != nil {
 			t.Fatalf("pixiArchive %s: %v", asset, err)

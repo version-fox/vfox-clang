@@ -6,6 +6,21 @@
 
 ## 0.5.4（2026-11-23）
 
+### 新增
+
+- Windows arm64：插件现在可以在该平台上安装 clang，安装包来自 pixi 的 `pixi-aarch64-pc-windows-msvc.zip`，clang 来自 conda-forge 的 `win-arm64` 包（[#18](https://github.com/version-fox/vfox-clang/issues/18)）。参见[平台](../../README_CN.md#平台)。
+
+### 变更
+
+- `vfox search clang` 列出的是你所用平台上 conda-forge 发布的版本，不再是所有平台共用的同一份列表。在 macOS arm64 上，它不再列出 conda-forge 没有发布的 10.0.0 与 10.0.1；在 Windows arm64 上，目前只列出最新版本。没有 pixi 安装包的平台不列出任何版本。
+- 所选版本不在该平台的列表中时，安装会以一条说明原因的消息停止，不再附带栈回溯。
+
+### 修复
+
+- 不受支持的平台会以一条消息停止安装，消息写出该平台及受支持的平台，且不再附带 Lua 栈回溯（[#17](https://github.com/version-fox/vfox-clang/issues/17)）。参见[故障排查](troubleshooting.md#unsupported-platform-x-y)。
+
+## 0.5.4（2026-11-23）
+
 ### 修复
 
 - pixi 的安装包在 vfox 解压之前，会与 pixi 在其旁边发布的 SHA-256 核对。此前安装会打印 `Checksum is not provided` 并跳过这项校验（[#14](https://github.com/version-fox/vfox-clang/issues/14)）。没有发布 SHA-256 的版本仍会安装，并打印该警告。如果读不到 SHA-256，安装会以错误停止，见 [故障排查](troubleshooting.md#无法获取安装包的-sha-256)。

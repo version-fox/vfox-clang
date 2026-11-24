@@ -63,11 +63,11 @@ pixi 无法从 conda 频道安装 clang。错误信息中会显示失败的命�
 
 ## Unsupported version: X
 
-该版本不在插件读取的列表中。运行 `vfox search clang` 查看可用版本；如果列表已过期，改用 `vfox search clang -- --no-cache`。
+该版本不在你所用平台的列表中，此列表即 `vfox search clang` 显示的内容。运行 `vfox search clang` 查看可用版本；如果列表已过期，改用 `vfox search clang -- --no-cache`。安装会以该消息停止，不附带 Lua 栈回溯；其后的 `no installable runtime provided` 是 vfox 对这次停止的报告。各平台的版本数量不同，参见[平台](../../README_CN.md#平台)。
 
-## Unsupported environment: windows-arm64
+## Unsupported platform: X-Y
 
-插件支持 Linux x86_64 与 arm64、macOS x86_64 与 arm64，以及 Windows x86_64。其他平台会在下载任何内容之前停止。
+vfox 以 `<系统>-<架构>` 的形式报告平台，例如 `freebsd-amd64`，错误信息会写出该平台。插件支持 Linux x86_64 与 arm64、macOS x86_64 与 arm64，以及 Windows x86_64 与 arm64。在其他平台上，安装会在下载任何内容之前停止。信息之后的 `no installable runtime provided` 是 vfox 对这次停止的报告。`vfox search clang` 在这类平台上不列出任何版本，并打印同样的消息。
 
 ## unexpected EOF while downloading
 

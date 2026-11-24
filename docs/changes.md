@@ -6,6 +6,28 @@ What changed in each release, as a user notices it. GitHub's release pages list 
 
 ## 0.5.4 (2026-11-23)
 
+### Added
+
+- Windows arm64: the plugin installs clang there, from pixi's `pixi-aarch64-pc-windows-msvc.zip` and
+  conda-forge's `win-arm64` packages ([#18](https://github.com/version-fox/vfox-clang/issues/18)).
+  See [Platforms](../README.md#platforms).
+
+### Changed
+
+- `vfox search clang` lists the versions that conda-forge publishes for the platform you are on, not one
+  list for every platform. On macOS arm64 it no longer lists 10.0.0 and 10.0.1, which conda-forge does not
+  publish there; on Windows arm64 it lists only the latest version. On a platform without a pixi archive it
+  lists nothing.
+- A version the platform does not list is refused with a message that says so, and no stack traceback.
+
+### Fixed
+
+- An unsupported platform stops the install with a message that names the platform and the supported
+  ones, and no Lua stack traceback ([#17](https://github.com/version-fox/vfox-clang/issues/17)). See
+  [troubleshooting.md](troubleshooting.md#unsupported-platform-x-y).
+
+## 0.5.4 (2026-11-23)
+
 ### Fixed
 
 - pixi's archive is checked against the SHA-256 that pixi publishes next to it, before vfox unpacks it.

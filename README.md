@@ -4,14 +4,14 @@
 
 [Clang](https://clang.llvm.org/) plugin for [vfox](https://vfox.lhan.me). The clang
 packages come from [conda-forge](https://conda-forge.org/), installed by
-[pixi](https://pixi.sh/), so every version in `vfox search clang` is one conda-forge
-publishes for your platform.
+[pixi](https://pixi.sh/), so `vfox search clang` lists the versions conda-forge publishes for
+your platform. Not every platform has every version; see [Platforms](#platforms).
 
 ## Requirements
 
 - [vfox](https://github.com/version-fox/vfox) 0.5.1 or later. Linking clang that is already on the machine
   (`vfox link --detect clang`) needs vfox 1.1.0 or later; see [docs/link.md](docs/link.md).
-- Linux (x86_64, arm64), macOS (x86_64, arm64) or Windows (x86_64).
+- Linux (x86_64, arm64), macOS (x86_64, arm64) or Windows (x86_64, arm64).
 - Network access to GitHub and conda-forge while installing. See [Mirrors](#mirrors)
   for networks where they are slow or blocked.
 
@@ -95,9 +95,14 @@ conda-forge such as `https://prefix.dev/conda-forge`. Set them before the comman
 | macOS        | x86_64       | `pixi-x86_64-apple-darwin.tar.gz`               |
 | macOS        | arm64        | `pixi-aarch64-apple-darwin.tar.gz`              |
 | Windows      | x86_64       | `pixi-x86_64-pc-windows-msvc.zip`               |
+| Windows      | arm64        | `pixi-aarch64-pc-windows-msvc.zip`              |
 
 Install paths may contain spaces, as a Windows user profile or a macOS account name
 often does.
+
+`vfox search clang` lists the versions that conda-forge publishes for the platform you are on, so some
+platforms list fewer. On Windows arm64 that is only the latest version at the time of writing. A platform
+without a pixi archive lists nothing; see [troubleshooting](docs/troubleshooting.md#unsupported-platform-x-y).
 
 ## Documentation
 

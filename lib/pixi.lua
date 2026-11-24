@@ -24,27 +24,54 @@ local ARCHITECTURES = {
     amd64 = "x86_64",
 }
 
+--- Maps the platform vfox reports to the conda subdir that conda-forge names it by. The version
+--- list has one entry per subdir, with the versions conda-forge publishes for that platform.
+local SUBDIRS = {
+    linux = { amd64 = "linux-64", arm64 = "linux-aarch64" },
+    darwin = { amd64 = "osx-64", arm64 = "osx-arm64" },
+    windows = { amd64 = "win-64", arm64 = "win-arm64" },
+}
+
+--- Returns the conda subdir of the platform, or nil when the plugin does not support the platform.
+function pixi.subdir(osType, archType)
+    local byArch = SUBDIRS[osType]
+    if byArch == nil then
+        return nil
+    end
+    return byArch[archType]
+end
+
+--- Names the platforms the plugin installs clang on, in the reason for any other platform.
+local SUPPORTED = "Linux x86_64 and arm64, macOS x86_64 and arm64, and Windows x86_64 and arm64"
+
 --- Returns the archive name of pixi's latest release for the platform. Each
 --- platform name is one vfox reports: darwin is macOS, and vfox never says macos.
+--- For a platform the plugin does not support it returns nil and the reason, which
+--- names the platform and the supported ones. No error is raised.
 function pixi.asset(osType, archType)
     local arch = ARCHITECTURES[archType]
-    if arch == nil then
-        error("Unsupported architecture: " .. tostring(archType))
+    if arch ~= nil then
+        if osType == "darwin" then
+            return "pixi-" .. arch .. "-apple-darwin.tar.gz"
+        elseif osType == "linux" then
+            return "pixi-" .. arch .. "-unknown-linux-musl.tar.gz"
+        elseif osType == "windows" then
+            return "pixi-" .. arch .. "-pc-windows-msvc.zip"
+        end
     end
-    if osType == "darwin" then
-        return "pixi-" .. arch .. "-apple-darwin.tar.gz"
-    elseif osType == "linux" then
-        return "pixi-" .. arch .. "-unknown-linux-musl.tar.gz"
-    elseif osType == "windows" and arch == "x86_64" then
-        return "pixi-" .. arch .. "-pc-windows-msvc.zip"
-    end
-    error("Unsupported environment: " .. tostring(osType) .. "-" .. tostring(archType))
+    local reason = "Unsupported platform: " .. tostring(osType) .. "-" .. tostring(archType)
+    return nil, reason .. ". The plugin installs clang on " .. SUPPORTED .. "."
 end
 
 --- Returns the URL of the pixi archive for the platform, through GITHUB_URL when
---- a mirror is set.
+--- a mirror is set. For a platform the plugin does not support it returns nil and
+--- the reason, as pixi.asset does.
 function pixi.downloadURL(osType, archType)
-    return util.githubURL() .. "/prefix-dev/pixi/releases/latest/download/" .. pixi.asset(osType, archType)
+    local asset, reason = pixi.asset(osType, archType)
+    if asset == nil then
+        return nil, reason
+    end
+    return util.githubURL() .. "/prefix-dev/pixi/releases/latest/download/" .. asset
 end
 
 --- Returns the URL of the .sha256 file that pixi publishes next to the archive at url.

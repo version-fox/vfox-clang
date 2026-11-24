@@ -53,32 +53,63 @@ local function failure_of(fn)
     return tostring(err)
 end
 
--- Every platform vfox reports, with pixi's own asset names.
+-- Every platform vfox reports, with pixi's own asset names. Windows arm64 has its own archive.
 expect(pixi.asset("linux", "amd64"), "pixi-x86_64-unknown-linux-musl.tar.gz", "linux amd64")
 expect(pixi.asset("linux", "arm64"), "pixi-aarch64-unknown-linux-musl.tar.gz", "linux arm64")
 expect(pixi.asset("darwin", "amd64"), "pixi-x86_64-apple-darwin.tar.gz", "darwin amd64")
 expect(pixi.asset("darwin", "arm64"), "pixi-aarch64-apple-darwin.tar.gz", "darwin arm64")
 expect(pixi.asset("windows", "amd64"), "pixi-x86_64-pc-windows-msvc.zip", "windows amd64")
+expect(pixi.asset("windows", "arm64"), "pixi-aarch64-pc-windows-msvc.zip", "windows arm64")
+
+-- The conda subdir of each platform names its entry in the version list.
+expect(pixi.subdir("linux", "amd64"), "linux-64", "subdir linux amd64")
+expect(pixi.subdir("linux", "arm64"), "linux-aarch64", "subdir linux arm64")
+expect(pixi.subdir("darwin", "amd64"), "osx-64", "subdir darwin amd64")
+expect(pixi.subdir("darwin", "arm64"), "osx-arm64", "subdir darwin arm64")
+expect(pixi.subdir("windows", "amd64"), "win-64", "subdir windows amd64")
+expect(pixi.subdir("windows", "arm64"), "win-arm64", "subdir windows arm64")
+expect(pixi.subdir("windows", "386"), nil, "no subdir for an unsupported architecture")
+expect(pixi.subdir("macos", "arm64"), nil, "no subdir for macos")
+
+-- A platform without an archive has no asset. The reason names the platform and the supported
+-- platforms, and nothing is raised, so the hook can print it without a stack traceback.
+local SUPPORTED = "Linux x86_64 and arm64, macOS x86_64 and arm64, and Windows x86_64 and arm64"
+local function unsupported(osType, archType)
+    local asset, reason = pixi.asset(osType, archType)
+    expect(asset, nil, "no asset for " .. osType .. "-" .. archType)
+    assert(reason ~= nil, "a reason for " .. osType .. "-" .. archType)
+    return reason
+end
 
 -- macOS is reported as darwin; the old name macos is unsupported (issue #7).
-local message = failure_of(function()
-    pixi.asset("macos", "arm64")
-end)
-assert(message:find("Unsupported environment: macos-arm64", 1, true), "macos is unsupported: " .. message)
-message = failure_of(function()
-    pixi.asset("windows", "arm64")
-end)
-assert(message:find("Unsupported environment: windows-arm64", 1, true), "windows arm64: " .. message)
-message = failure_of(function()
-    pixi.asset("linux", "386")
-end)
-assert(message:find("Unsupported architecture: 386", 1, true), "386: " .. message)
+local message = unsupported("macos", "arm64")
+assert(
+    message:find("Unsupported platform: macos-arm64. The plugin installs clang on " .. SUPPORTED .. ".", 1, true),
+    message
+)
+message = unsupported("windows", "386")
+assert(message:find("Unsupported platform: windows-386. ", 1, true), "windows 386: " .. message)
+message = unsupported("linux", "386")
+assert(message:find("Unsupported platform: linux-386. ", 1, true), "linux 386: " .. message)
+message = unsupported("freebsd", "amd64")
+assert(message:find("Unsupported platform: freebsd-amd64. ", 1, true), "freebsd: " .. message)
 
 -- The download goes through GITHUB_URL when a mirror is set.
 expect(
     pixi.downloadURL("linux", "amd64"),
     "https://github.com/prefix-dev/pixi/releases/latest/download/pixi-x86_64-unknown-linux-musl.tar.gz",
     "download URL"
+)
+expect(
+    pixi.downloadURL("windows", "arm64"),
+    "https://github.com/prefix-dev/pixi/releases/latest/download/pixi-aarch64-pc-windows-msvc.zip",
+    "windows arm64 download URL"
+)
+local url, reason = pixi.downloadURL("windows", "386")
+expect(url, nil, "no download URL for an unsupported platform")
+assert(
+    reason ~= nil and reason:find("Unsupported platform: windows-386. ", 1, true),
+    "download reason: " .. tostring(reason)
 )
 state.env.GITHUB_URL = "https://mirror.example/gh/"
 expect(
@@ -99,6 +130,11 @@ expect(
     pixi.checksumURL(pixi.downloadURL("windows", "amd64")),
     "https://mirror.example/gh/prefix-dev/pixi/releases/latest/download/pixi-x86_64-pc-windows-msvc.zip.sha256",
     "mirror checksum URL"
+)
+expect(
+    pixi.checksumURL(pixi.downloadURL("windows", "arm64")),
+    "https://mirror.example/gh/prefix-dev/pixi/releases/latest/download/pixi-aarch64-pc-windows-msvc.zip.sha256",
+    "mirror checksum URL for Windows arm64"
 )
 state.env.GITHUB_URL = nil
 

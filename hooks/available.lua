@@ -12,14 +12,21 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
+local pixi = require("pixi")
 local util = require("util")
 local versions = require("versions")
 
---- Lists the versions. `vfox search clang -- --no-cache` deletes the cache file
---- first (the arguments after -- reach the hook, see vfox#808).
+--- Lists the versions for the platform. `vfox search clang -- --no-cache` deletes the cache file
+--- first (the arguments after -- reach the hook, see vfox#808). On a platform the plugin does not
+--- support nothing can be installed, so nothing is listed, and the reason is printed instead.
 function PLUGIN:Available(ctx)
     if util.contains(ctx.args, "--no-cache") then
         versions.clearCache()
+    end
+    local asset, reason = pixi.asset(RUNTIME.osType, RUNTIME.archType)
+    if asset == nil then
+        print(reason)
+        return {}
     end
     return versions.available()
 end

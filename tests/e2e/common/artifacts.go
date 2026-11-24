@@ -61,12 +61,18 @@ var vfoxReleases = map[string]vfoxRelease{
 		sha256: "1bbec8fffddbb62de0d93030c3f6203c69680662bc65257ca4a5e611cb607d0a",
 		binary: "vfox.exe",
 	},
+	"windows/arm64": {
+		asset:  "vfox_" + VfoxVersion + "_windows_aarch64.zip",
+		sha256: "67bf5c8b3bde5c1b3fc06dcaa460db9bb1dc9fc587b467d1dc96205377767465",
+		binary: "vfox.exe",
+	},
 }
 
 // pixiAssets names pixi's release archive for each platform the suites run on.
 var pixiAssets = map[string]string{
 	"linux/amd64":   "pixi-x86_64-unknown-linux-musl.tar.gz",
 	"windows/amd64": "pixi-x86_64-pc-windows-msvc.zip",
+	"windows/arm64": "pixi-aarch64-pc-windows-msvc.zip",
 }
 
 // Artifacts are the files the scenarios put into a target.
